@@ -1,23 +1,18 @@
 {
-  "name": "create-sai-pvg-auth",
-  "version": "1.0.0",
-  "description": "CLI scaffolding tool for creating the PVG Authentication and Authorization System",
-  "bin": {
-    "create-sai-pvg-auth": "./bin/create-pvg-auth.js"
-  },
-  "files": [
-    "bin"
+  "name": "pvg-auth-module",
+  "version": "2.0.0",
+  "description": "PVG Authentication and Authorization System",
+  "private": true,
+  "workspaces": [
+    "frontend/admin",
+    "frontend/user"
   ],
-  "main": "index.js",
   "scripts": {
     "dev:backend": "cd backend && venv\\Scripts\\python.exe -m uvicorn main:app --reload --port 8000",
-    "dev:user": "cd frontend/user && npm run dev",
-    "dev:admin": "cd frontend/admin && npm run dev",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:user\" \"npm run dev:admin\""
+    "dev:admin": "npm run dev --workspace=frontend/admin",
+    "dev:user": "npm run dev --workspace=frontend/user",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:admin\" \"npm run dev:user\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "concurrently": "^8.2.2"
   },

@@ -89,6 +89,8 @@ class User(Base, AuditMixin):
     email = Column(String(150), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
     status = Column(Boolean, default=True)
+    department = Column(String(100), nullable=True)
+    phone_number = Column(String(20), nullable=True)
 
     # Relationship to user_roles
     user_roles = relationship("UserRole", back_populates="user")

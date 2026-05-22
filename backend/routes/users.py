@@ -32,12 +32,29 @@ def get_user_me(current_user: models.User = Depends(get_current_user)):
     }
 
 
+from typing import Optional
+
 @router.get("", response_model=List[schemas.UserOut])
-def get_all_users(db: Session = Depends(get_db)):
+def get_all_users(
+    role: Optional[str] = None,
+    department: Optional[str] = None,
+    email: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
     """
-    Return a list of all registered users.
+    Return a list of registered users. Supports filtering by role, department, and email.
     """
-    users = db.query(models.User).all()
+    query = db.query(models.User)
+
+    if email:
+        query = query.filter(models.User.email == email)
+    if department:
+        query = query.filter(models.User.department == department)
+    if role:
+        # Join UserRole and Role to filter by role_name
+        query = query.join(models.UserRole).join(models.Role).filter(models.Role.role_name == role)
+
+    users = query.all()
     return users
 
 

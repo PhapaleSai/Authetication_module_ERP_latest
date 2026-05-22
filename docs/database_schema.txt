@@ -1,0 +1,119 @@
+Database Schema
+===============
+
+Table: modules
+--------------
+  - module_id (INTEGER, NOT NULL)
+  - module_name (VARCHAR(100), NOT NULL)
+  - description (TEXT, NULL)
+  - created_at (TIMESTAMP, NULL)
+  - updated_at (TIMESTAMP, NULL)
+
+Table: features
+---------------
+  - feature_id (INTEGER, NOT NULL)
+  - feature_name (VARCHAR(100), NOT NULL)
+  - description (TEXT, NULL)
+  - module_id (INTEGER, NULL)
+  - created_at (TIMESTAMP, NULL)
+  - updated_at (TIMESTAMP, NULL)
+
+Table: permissions
+------------------
+  - permission_id (INTEGER, NOT NULL)
+  - permission_name (VARCHAR(100), NOT NULL)
+  - action (VARCHAR(50), NULL)
+  - feature_id (INTEGER, NULL)
+  - created_at (TIMESTAMP, NULL)
+  - updated_at (TIMESTAMP, NULL)
+
+Table: roles
+------------
+  - role_id (INTEGER, NOT NULL)
+  - role_name (VARCHAR(100), NOT NULL)
+  - description (TEXT, NULL)
+  - created_at (TIMESTAMP, NULL)
+  - updated_at (TIMESTAMP, NULL)
+  - created_by (VARCHAR(150), NULL)
+  - updated_by (VARCHAR(150), NULL)
+  - created_from (VARCHAR(100), NULL)
+  - token_expiry (TIMESTAMP, NULL)
+  - permissions (JSONB, NULL)
+
+Table: role_permissions
+-----------------------
+  - role_permission_id (INTEGER, NOT NULL)
+  - role_id (INTEGER, NULL)
+  - permission_id (INTEGER, NULL)
+  - created_at (TIMESTAMP, NULL)
+  - updated_at (TIMESTAMP, NULL)
+
+Table: user_roles
+-----------------
+  - user_role_id (INTEGER, NOT NULL)
+  - user_id (INTEGER, NULL)
+  - role_id (INTEGER, NULL)
+  - created_at (TIMESTAMP, NULL)
+  - updated_at (TIMESTAMP, NULL)
+  - created_by (VARCHAR(150), NULL)
+  - updated_by (VARCHAR(150), NULL)
+  - created_from (VARCHAR(100), NULL)
+  - token_expiry (TIMESTAMP, NULL)
+
+Table: logs
+-----------
+  - login_log_id (INTEGER, NOT NULL)
+  - user_id (INTEGER, NULL)
+  - ip_address (VARCHAR(50), NULL)
+  - device_info (VARCHAR(255), NULL)
+  - status (VARCHAR(50), NULL)
+  - login_time (TIMESTAMP, NULL)
+  - created_at (TIMESTAMP, NULL)
+  - updated_at (TIMESTAMP, NULL)
+
+Table: users
+------------
+  - user_id (INTEGER, NOT NULL)
+  - username (VARCHAR(100), NOT NULL)
+  - email (VARCHAR(150), NOT NULL)
+  - password_hash (VARCHAR(255), NOT NULL)
+  - status (BOOLEAN, NULL)
+  - created_at (TIMESTAMP, NULL)
+  - updated_at (TIMESTAMP, NULL)
+  - created_by (VARCHAR(150), NULL)
+  - updated_by (VARCHAR(150), NULL)
+  - created_from (VARCHAR(100), NULL)
+  - token_expiry (TIMESTAMP, NULL)
+  - full_name (VARCHAR(150), NULL)
+
+Table: user_tokens
+------------------
+  - token_id (INTEGER, NOT NULL)
+  - user_id (INTEGER, NULL)
+  - token (VARCHAR, NOT NULL)
+  - expiry_date (TIMESTAMP, NOT NULL)
+  - is_active (BOOLEAN, NULL)
+  - created_at (TIMESTAMP, NULL)
+  - updated_at (TIMESTAMP, NULL)
+  - created_by (VARCHAR(150), NULL)
+  - updated_by (VARCHAR(150), NULL)
+  - created_from (VARCHAR(100), NULL)
+  - token_expiry (TIMESTAMP, NULL)
+  - refresh_token (VARCHAR, NULL)
+  - refresh_token_expiry (TIMESTAMP, NULL)
+
+Table: students
+---------------
+  - id (INTEGER, NOT NULL)
+  - name (VARCHAR(100), NOT NULL)
+  - student_class (VARCHAR(50), NOT NULL)
+  - phone (VARCHAR(15), NOT NULL)
+  - username (VARCHAR(50), NOT NULL)
+  - password_hash (VARCHAR(255), NOT NULL)
+  - created_at (TIMESTAMP, NULL)
+  - updated_at (TIMESTAMP, NULL)
+  - created_by (VARCHAR(150), NULL)
+  - updated_by (VARCHAR(150), NULL)
+  - created_from (VARCHAR(100), NULL)
+  - token_expiry (TIMESTAMP, NULL)
+

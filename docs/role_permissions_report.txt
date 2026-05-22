@@ -1,0 +1,320 @@
+=== Role: Accountant ===
+  - Fee Management: create, read
+  - Payment History: read
+  - Student Profile: read
+
+=== Role: Accountants ===
+  (No permissions assigned)
+
+=== Role: Admission Admin ===
+  (No permissions assigned)
+
+=== Role: Employer ===
+  (No permissions assigned)
+
+=== Role: Fees Admin ===
+  (No permissions assigned)
+
+=== Role: Guest ===
+  (No permissions assigned)
+
+=== Role: HOD ===
+  (No permissions assigned)
+
+=== Role: HODs ===
+  (No permissions assigned)
+
+=== Role: IT Admins ===
+  (No permissions assigned)
+
+=== Role: Non-Teaching Staff ===
+  (No permissions assigned)
+
+=== Role: Principals & Vice Principals ===
+  (No permissions assigned)
+
+=== Role: Student ===
+  (No permissions assigned)
+
+=== Role: Students ===
+  (No permissions assigned)
+
+=== Role: Teacher ===
+  - Attendance: create, read
+  - Exam Schedule: read
+  - Results: read
+  - Student Profile: read
+  - Timetable: read
+
+=== Role: Teaching Staff ===
+  (No permissions assigned)
+
+=== Role: accountant ===
+  - Fee Receipts: create, read, update
+  - Fee Records: create, delete, read, update
+  - Password Reset: read
+  - User Login: read
+  - View Notifications: read
+
+=== Role: admin ===
+  - Academic Calendar: VIEW, read, update
+  - Application Review: APPROVE, EDIT, VIEW, create, delete, read, update
+  - Attendance: VIEW, create, read
+  - Attendance Reports: VIEW, create, delete, read, update
+  - Classroom Allocation: CREATE, DELETE, EDIT, VIEW, create, delete, read, update
+  - Company Registration: CREATE, DELETE, EDIT, VIEW, create, delete, read, update
+  - Create Application: CREATE, VIEW, create, delete, read, update
+  - Create Timetable: CREATE, DELETE, VIEW, create, delete, read, update
+  - Department Feedback: VIEW, create, delete, read, update
+  - Department Students: VIEW, create, delete, read, update
+  - Document Verification: APPROVE, EDIT, VIEW, create, delete, read, update
+  - Edit Timetable: DELETE, EDIT, VIEW, create, delete, read, update
+  - Enter Marks: CREATE, EDIT, VIEW, create, delete, read, update
+  - Exam Schedule: VIEW, create, read
+  - Fee Management: VIEW, create, read
+  - Fee Payment: APPROVE, CREATE, EDIT, VIEW, create, delete, read, update
+  - Fee Receipts: CREATE, VIEW, create, delete, read, update
+  - Fee Records: DELETE, EDIT, VIEW, create, delete, read, update
+  - Fee Reports: VIEW, create, delete, read, update
+  - Internships: VIEW, read
+  - Interview Scheduling: APPROVE, CREATE, EDIT, VIEW, create, delete, read, update
+  - Job Application: APPROVE, CREATE, VIEW, create, delete, read, update
+  - Job Board: VIEW, create, read
+  - Job Posting: CREATE, DELETE, EDIT, VIEW, create, delete, read, update
+  - Mark Attendance: CREATE, VIEW, create, delete, read, update
+  - Password Reset: VIEW, create, delete, read, update
+  - Payment History: VIEW, read
+  - Permission Assignment: CREATE, DELETE, EDIT, VIEW, create, delete, read, update
+  - Publish Results: APPROVE, VIEW, create, delete, read, update
+  - Result Reports: VIEW, create, delete, read, update
+  - Results: VIEW, create, read
+  - Role Management: CREATE, DELETE, EDIT, VIEW, create, delete, read, update
+  - Send College Notice: CREATE, DELETE, VIEW, create, delete, read, update
+  - Send Department Notice: CREATE, DELETE, VIEW, create, delete, read, update
+  - Student Documents: DELETE, EDIT, VIEW, create, delete, read, update
+  - Student Enrollment: APPROVE, CREATE, VIEW, create, delete, read, update
+  - Student Profile: EDIT, EDIT, VIEW, VIEW, create, create, delete, delete, read, read, update, update
+  - Student Records: EDIT, VIEW, create, delete, read, update
+  - Submit Feedback: CREATE, VIEW, create, delete, read, update
+  - Timetable: VIEW, read, update
+  - Upload Documents: CREATE, DELETE, EDIT, VIEW, create, delete, read, update
+  - User Login: VIEW, create, delete, read, update
+  - Verify Marks: APPROVE, VIEW, create, delete, read, update
+  - View Application Status: VIEW, create, delete, read, update
+  - View Attendance: VIEW, create, delete, read, update
+  - View Feedback: VIEW, create, delete, read, update
+  - View Notifications: VIEW, create, delete, read, update
+  - View Timetable: VIEW, create, delete, read, update
+
+=== Role: applicant ===
+  - Create Application: create, read, update
+  - Password Reset: read
+  - Upload Documents: create, read, update
+  - User Login: read
+  - View Application Status: read
+  - View Notifications: read
+
+=== Role: exam_controller ===
+  - Company Registration: create, delete, read, update
+  - Enter Marks: create, read, update
+  - Interview Scheduling: create, delete, read, update
+  - Job Posting: create, delete, read, update
+  - Password Reset: read
+  - Publish Results: create, delete, read, update
+  - User Login: read
+  - Verify Marks: create, read, update
+  - View Notifications: read
+
+=== Role: faculty ===
+  - Attendance Reports: read
+  - Edit Timetable: update
+  - Enter Marks: create, read, update
+  - Export Attendance Reports: create, delete, read, update
+  - Generate Attendance Percentage: create, delete, read, update
+  - Mark Attendance: create, read, update
+  - Mark Student Attendance: create, delete, read, update
+  - Password Reset: read
+  - Search and Filter Student Records: create, delete, read, update
+  - Student Profile: read
+  - Student Records: read
+  - Submit Feedback: read
+  - Teacher Secure Login: create, delete, read, update
+  - Update/Edit Attendance Records: create, delete, read, update
+  - User Login: read
+  - View Attendance: read
+  - View Class Attendance Reports: create, delete, read, update
+  - View Feedback: read
+  - View Notifications: read
+  - View Timetable: read
+
+=== Role: guest ===
+  (No permissions assigned)
+
+=== Role: hod ===
+  - Application Review: read, update
+  - Attendance Reports: read
+  - Classroom Allocation: read
+  - Create Timetable: create, read, update
+  - Department Feedback: read
+  - Department Students: create, read, update
+  - Document Verification: read
+  - Edit Timetable: create, read, update
+  - Enter Marks: read
+  - Mark Attendance: create, read, update
+  - Password Reset: read
+  - Result Reports: read
+  - Send Department Notice: create, read, update
+  - Student Documents: read
+  - Student Enrollment: read
+  - Student Profile: read
+  - Student Records: read
+  - User Login: read
+  - Verify Marks: read
+  - View Application Status: read
+  - View Attendance: read
+  - View Feedback: read
+  - View Notifications: read
+  - View Timetable: read
+
+=== Role: it_admin ===
+  - Application Review: create, delete, read, update
+  - Attendance Reports: create, delete, read, update
+  - Classroom Allocation: create, delete, read, update
+  - Company Registration: create, delete, read, update
+  - Create Application: create, delete, read, update
+  - Create Timetable: create, delete, read, update
+  - Department Feedback: create, delete, read, update
+  - Department Students: create, delete, read, update
+  - Document Verification: create, delete, read, update
+  - Edit Timetable: create, delete, read, update
+  - Enter Marks: create, delete, read, update
+  - Fee Payment: create, delete, read, update
+  - Fee Receipts: create, delete, read, update
+  - Fee Records: create, delete, read, update
+  - Fee Reports: create, delete, read, update
+  - Interview Scheduling: create, delete, read, update
+  - Job Application: create, delete, read, update
+  - Job Posting: create, delete, read, update
+  - Mark Attendance: create, delete, read, update
+  - Password Reset: create, delete, read, update
+  - Permission Assignment: create, delete, read, update
+  - Publish Results: create, delete, read, update
+  - Result Reports: create, delete, read, update
+  - Role Management: create, delete, read, update
+  - Send College Notice: create, delete, read, update
+  - Send Department Notice: create, delete, read, update
+  - Student Documents: create, delete, read, update
+  - Student Enrollment: create, delete, read, update
+  - Student Profile: create, delete, read, update
+  - Student Records: create, delete, read, update
+  - Submit Feedback: create, delete, read, update
+  - Upload Documents: create, delete, read, update
+  - User Login: create, delete, read, update
+  - Verify Marks: create, delete, read, update
+  - View Application Status: create, delete, read, update
+  - View Attendance: create, delete, read, update
+  - View Feedback: create, delete, read, update
+  - View Notifications: create, delete, read, update
+  - View Timetable: create, delete, read, update
+
+=== Role: placement_cell ===
+  - Company Registration: create, delete, read, update
+  - Interview Scheduling: create, delete, read, update
+  - Job Application: create, delete, read, update
+  - Job Posting: create, delete, read, update
+  - Password Reset: read
+  - User Login: read
+  - View Notifications: read
+
+=== Role: placement_officer ===
+  (No permissions assigned)
+
+=== Role: principal ===
+  - Application Review: read
+  - Attendance Reports: read
+  - Classroom Allocation: read
+  - Company Registration: read
+  - Create Timetable: read
+  - Department Feedback: read
+  - Department Students: read
+  - Document Verification: read
+  - Edit Timetable: read
+  - Enter Marks: read
+  - Fee Receipts: read
+  - Fee Records: read
+  - Fee Reports: read
+  - Interview Scheduling: read
+  - Job Posting: read
+  - Mark Attendance: read
+  - Password Reset: read
+  - Publish Results: read
+  - Result Reports: read
+  - Send College Notice: create, read, update
+  - Send Department Notice: read
+  - Student Documents: read
+  - Student Enrollment: read
+  - Student Profile: read
+  - Student Records: read
+  - User Login: read
+  - Verify Marks: read
+  - View Application Status: read
+  - View Attendance: read
+  - View Feedback: read
+  - View Notifications: read
+  - View Timetable: read
+
+=== Role: student ===
+  - Attendance: read
+  - Check Attendance Percentage: read
+  - Fee Payment: create
+  - Fee Receipts: read
+  - Fee Records: read
+  - Job Application: create
+  - Password Reset: read
+  - Publish Results: read
+  - Receive Attendance Notifications: read
+  - Student Login Authentication: read
+  - Student Profile: read, read, update
+  - Submit Feedback: create
+  - Timetable: read
+  - User Login: read
+  - View Attendance: read
+  - View Daily Attendance Records: read
+  - View Monthly Attendance Reports: read
+  - View Notifications: read
+  - View Timetable: read
+
+=== Role: vice_principal ===
+  - Application Review: read
+  - Attendance Reports: read
+  - Classroom Allocation: read
+  - Company Registration: read
+  - Create Timetable: read
+  - Department Feedback: read
+  - Department Students: read
+  - Document Verification: read
+  - Edit Timetable: read
+  - Enter Marks: read
+  - Fee Receipts: read
+  - Fee Records: read
+  - Fee Reports: read
+  - Interview Scheduling: read
+  - Job Posting: read
+  - Mark Attendance: read
+  - Password Reset: read
+  - Publish Results: read
+  - Result Reports: read
+  - Send College Notice: create, read, update
+  - Send Department Notice: read
+  - Student Documents: read
+  - Student Enrollment: read
+  - Student Profile: read
+  - Student Records: read
+  - User Login: read
+  - Verify Marks: read
+  - View Application Status: read
+  - View Attendance: read
+  - View Feedback: read
+  - View Notifications: read
+  - View Timetable: read
+

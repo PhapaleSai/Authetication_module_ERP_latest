@@ -126,12 +126,16 @@ class UserCreate(BaseModel):
     full_name: Optional[str] = None
     email: EmailStr
     password: str
+    department: Optional[str] = None
+    phone_number: Optional[str] = None
 
 class UserOut(BaseModel):
     user_id: int
     username: str
     full_name: Optional[str] = None
     email: str
+    department: Optional[str] = None
+    phone_number: Optional[str] = None
     role: Optional[str] = None
     permissions: List[str] = []
     created_at: Optional[datetime] = None

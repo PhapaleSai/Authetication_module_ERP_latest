@@ -171,6 +171,9 @@ function Layout({ children }) {
                                         if (type === 'NOTIFICATION') return 'http://localhost:5179';
                                         if (type === 'ALUMNI') return 'http://localhost:5180';
                                         if (type === 'ACADEMIC') return 'http://localhost:5181';
+                                        if (type === 'FEEDBACK') return 'http://localhost:5182';
+                                        if (type === 'EXAMINATION') return 'http://localhost:5183';
+                                        if (type === 'ATTENDANCE') return 'http://localhost:5184';
                                     }
                                     if (type === 'ADMISSION') return import.meta.env.VITE_ADMISSION_URL;
                                     if (type === 'SIS') return import.meta.env.VITE_SIS_URL;
@@ -180,6 +183,9 @@ function Layout({ children }) {
                                     if (type === 'NOTIFICATION') return import.meta.env.VITE_NOTIFICATION_URL;
                                     if (type === 'ALUMNI') return import.meta.env.VITE_ALUMNI_URL;
                                     if (type === 'ACADEMIC') return import.meta.env.VITE_ACADEMIC_URL;
+                                    if (type === 'FEEDBACK') return import.meta.env.VITE_FEEDBACK_URL;
+                                    if (type === 'EXAMINATION') return import.meta.env.VITE_EXAMINATION_URL;
+                                    if (type === 'ATTENDANCE') return import.meta.env.VITE_ATTENDANCE_URL;
                                     return '';
                                 };
                                 const uid = user?.user_id || '';
@@ -197,6 +203,9 @@ function Layout({ children }) {
                                     isAdmin && { key: 'NOTIFICATION', label: 'Notification Module', icon: 'fa-bell', iconColor: '#fb923c', href: `${getModuleURL('NOTIFICATION')}/index.html?token=${currentToken}&user_id=${uid}&role=${roleParam}` },
                                     { key: 'ALUMNI', label: 'Alumni Module', icon: 'fa-users-rectangle', iconColor: '#2dd4bf', href: `${getModuleURL('ALUMNI')}?token=${currentToken}&user_id=${uid}&role=${roleParam}` },
                                     { key: 'ACADEMIC', label: 'Academic Module', icon: 'fa-book', iconColor: '#fb7185', href: `${getModuleURL('ACADEMIC')}/callback?token=${currentToken}&user_id=${uid}&role=${roleParam}` },
+                                    { key: 'FEEDBACK', label: 'Feedback Module', icon: 'fa-comments', iconColor: '#a855f7', href: `${getModuleURL('FEEDBACK')}/callback?token=${currentToken}&user_id=${uid}&role=${roleParam}` },
+                                    { key: 'EXAMINATION', label: 'Examination Module', icon: 'fa-pen-to-square', iconColor: '#6366f1', href: `${getModuleURL('EXAMINATION')}/callback?token=${currentToken}&user_id=${uid}&role=${roleParam}` },
+                                    { key: 'ATTENDANCE', label: 'Attendance Module', icon: 'fa-calendar-check', iconColor: '#14b8a6', href: `${getModuleURL('ATTENDANCE')}/callback?token=${currentToken}&user_id=${uid}&role=${roleParam}` },
                                 ].filter(Boolean);
 
                                 return modules.map(m => (
@@ -234,9 +243,9 @@ function Layout({ children }) {
 
                 {/* User Footer */}
                 <div className="erp-sidebar__footer">
-                    <div className="erp-avatar">{user.username?.[0]?.toUpperCase()}</div>
+                    <div className="erp-avatar">{(user.email || user.username)?.[0]?.toUpperCase()}</div>
                     <div className="erp-sidebar__user-info">
-                        <p>{user.username}</p>
+                        <p>{user.email || user.username}</p>
                         <span>{user.role}</span>
                     </div>
                     <div className="erp-sidebar__logout" onClick={logout} title="Logout">
@@ -265,8 +274,8 @@ function Layout({ children }) {
 
                         <div style={{ height: '24px', width: '1px', background: 'var(--erp-border)' }}></div>
                         <div className="erp-topbar__user" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.4rem 0.8rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => navigate(`/users/${user.user_id}`)}>
-                            <div className="erp-avatar erp-avatar--sm" style={{ width: '32px', height: '32px', fontSize: '0.85rem' }}>{user.username?.[0]?.toUpperCase()}</div>
-                            <span className="erp-topbar__user-name" style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user.username}</span>
+                            <div className="erp-avatar erp-avatar--sm" style={{ width: '32px', height: '32px', fontSize: '0.85rem' }}>{(user.email || user.username)?.[0]?.toUpperCase()}</div>
+                            <span className="erp-topbar__user-name" style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user.email || user.username}</span>
                         </div>
                     </div>
                 </header>

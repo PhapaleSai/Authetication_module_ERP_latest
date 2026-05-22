@@ -19,6 +19,34 @@ def get_roles(db: Session = Depends(get_db)):
     return roles
 
 
+@router.get("/catalog")
+def get_roles_catalog(db: Session = Depends(get_db)):
+    """
+    Publish a definitive, canonical catalog of roles for all modules.
+    Ensures 'faculty' exists as a core role.
+    """
+    roles = db.query(models.Role).all()
+    role_names = [r.role_name.lower() for r in roles]
+    
+    # Ensure Faculty exists in the catalog as requested by other modules
+    if "faculty" not in role_names:
+        faculty_role = models.Role(
+            role_name="faculty",
+            description="Canonical role for Attendance and Academic Planning",
+            created_by="system",
+            created_from="auto-provision"
+        )
+        db.add(faculty_role)
+        db.commit()
+        db.refresh(faculty_role)
+        roles.append(faculty_role)
+        
+    return {
+        "catalog": [r.role_name for r in roles],
+        "message": "Canonical role catalog for cross-module SSO mapping."
+    }
+
+
 @router.post("/assign", response_model=schemas.AssignRoleResponse)
 def assign_role(
     payload: schemas.AssignRoleRequest,

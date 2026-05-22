@@ -1,8 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 from database import engine
 import models
 from routes import auth, student, roles, users, admin, modules, features, permissions, logs
+from auth import limiter
 
 # Create all tables on startup (including new users & roles tables)
 models.Base.metadata.create_all(bind=engine)
@@ -12,6 +15,9 @@ app = FastAPI(
     version="2.0.0",
     description="Authentication & Authorization API with User Management",
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Allow React dev server and production nginx
 app.add_middleware(

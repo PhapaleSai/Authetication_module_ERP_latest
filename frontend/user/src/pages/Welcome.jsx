@@ -74,6 +74,30 @@ function Welcome() {
         window.location.href = redirectUrl;
     };
 
+    const handleEnterFeedback = () => {
+        const FEEDBACK_URL = import.meta.env.VITE_FEEDBACK_URL;
+        const currentToken = localStorage.getItem('token') || '';
+        if (!user || !user.user_id) return;
+        const redirectUrl = `${FEEDBACK_URL}/callback?token=${currentToken}&user_id=${user.user_id}&role=${encodeURIComponent(user.role || 'student')}&name=${encodeURIComponent(user.full_name || '')}`;
+        window.location.href = redirectUrl;
+    };
+
+    const handleEnterExamination = () => {
+        const EXAMINATION_URL = import.meta.env.VITE_EXAMINATION_URL;
+        const currentToken = localStorage.getItem('token') || '';
+        if (!user || !user.user_id) return;
+        const redirectUrl = `${EXAMINATION_URL}/callback?token=${currentToken}&user_id=${user.user_id}&role=${encodeURIComponent(user.role || 'student')}&name=${encodeURIComponent(user.full_name || '')}`;
+        window.location.href = redirectUrl;
+    };
+
+    const handleEnterAttendance = () => {
+        const ATTENDANCE_URL = import.meta.env.VITE_ATTENDANCE_URL;
+        const currentToken = localStorage.getItem('token') || '';
+        if (!user || !user.user_id) return;
+        const redirectUrl = `${ATTENDANCE_URL}/callback?token=${currentToken}&user_id=${user.user_id}&role=${encodeURIComponent(user.role || 'student')}&name=${encodeURIComponent(user.full_name || '')}`;
+        window.location.href = redirectUrl;
+    };
+
     if (!user) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--erp-bg)' }}>
@@ -81,6 +105,7 @@ function Welcome() {
             </div>
         );
     }
+    const isAlumniOrAdmin = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'].includes(user?.role?.toLowerCase()) || user?.role?.toLowerCase() === 'alumni';
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--erp-bg)', padding: '3rem 1rem', color: '#1e293b' }}>
@@ -100,15 +125,15 @@ function Welcome() {
                 }}>
                     <div style={{
                         width: '90px', height: '90px', borderRadius: '24px', margin: '0 auto 1.5rem',
-                        background: 'linear-gradient(135deg, #0c1e47, #0d2260)', color: 'white',
+                        background: 'linear-gradient(135deg, var(--erp-primary), var(--erp-primary-dark))', color: 'white',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5rem', fontWeight: 800,
                         boxShadow: '0 10px 20px rgba(12, 30, 71, 0.2)'
                     }}>
-                        {user.username?.[0]?.toUpperCase()}
+                        {(user.email || user.username)?.[0]?.toUpperCase()}
                     </div>
                     <h1 style={{ fontSize: '2.75rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
-                        Welcome, {user.username}
-                        <span style={{ color: '#0c1e47' }}>.</span>
+                        Welcome, {user.email || user.username}
+                        <span style={{ color: 'var(--erp-primary)' }}>.</span>
                     </h1>
                     <p style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '2.5rem', fontWeight: 400 }}>
                         Your unified campus profile is ready.
@@ -195,24 +220,25 @@ function Welcome() {
                     </div>
 
 
-
-                    <div style={{
-                        background: 'white', borderRadius: '24px', padding: '1.75rem 2rem',
-                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        border: '1.5px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.02)'
-                    }}>
-                        <div>
-                            <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.2rem' }}>Alumni Module</div>
-                            <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Stay connected with our global network of graduates.</div>
+                    {isAlumniOrAdmin && (
+                        <div style={{
+                            background: 'white', borderRadius: '24px', padding: '1.75rem 2rem',
+                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                            border: '1.5px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.02)'
+                        }}>
+                            <div>
+                                <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.2rem' }}>Alumni Module</div>
+                                <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Stay connected with our global network of graduates.</div>
+                            </div>
+                            <button
+                                className="erp-btn"
+                                style={{ background: '#2dd4bf', color: 'white', border: 'none', fontWeight: 700, borderRadius: '12px', padding: '0.75rem 1.25rem' }}
+                                onClick={handleEnterAlumni}
+                            >
+                                Enter Alumni Module <i className="fa-solid fa-users-rectangle" style={{ marginLeft: '0.5rem' }}></i>
+                            </button>
                         </div>
-                        <button
-                            className="erp-btn"
-                            style={{ background: '#2dd4bf', color: 'white', border: 'none', fontWeight: 700, borderRadius: '12px', padding: '0.75rem 1.25rem' }}
-                            onClick={handleEnterAlumni}
-                        >
-                            Enter Alumni Module <i className="fa-solid fa-users-rectangle" style={{ marginLeft: '0.5rem' }}></i>
-                        </button>
-                    </div>
+                    )}
 
                     <div style={{
                         background: 'white', borderRadius: '24px', padding: '1.75rem 2rem',
@@ -229,6 +255,60 @@ function Welcome() {
                             onClick={handleEnterAcademic}
                         >
                             Enter Academic Module <i className="fa-solid fa-book" style={{ marginLeft: '0.5rem' }}></i>
+                        </button>
+                    </div>
+
+                    <div style={{
+                        background: 'white', borderRadius: '24px', padding: '1.75rem 2rem',
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        border: '1.5px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.02)'
+                    }}>
+                        <div>
+                            <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.2rem' }}>Feedback Module</div>
+                            <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Submit your feedback, complaints, and suggestions.</div>
+                        </div>
+                        <button
+                            className="erp-btn"
+                            style={{ background: '#a855f7', color: 'white', border: 'none', fontWeight: 700, borderRadius: '12px', padding: '0.75rem 1.25rem' }}
+                            onClick={handleEnterFeedback}
+                        >
+                            Enter Feedback Module <i className="fa-solid fa-comments" style={{ marginLeft: '0.5rem' }}></i>
+                        </button>
+                    </div>
+
+                    <div style={{
+                        background: 'white', borderRadius: '24px', padding: '1.75rem 2rem',
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        border: '1.5px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.02)'
+                    }}>
+                        <div>
+                            <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.2rem' }}>Examination Module</div>
+                            <div style={{ color: '#64748b', fontSize: '0.9rem' }}>View exam schedules, results, and seating arrangements.</div>
+                        </div>
+                        <button
+                            className="erp-btn"
+                            style={{ background: '#6366f1', color: 'white', border: 'none', fontWeight: 700, borderRadius: '12px', padding: '0.75rem 1.25rem' }}
+                            onClick={handleEnterExamination}
+                        >
+                            Enter Examination <i className="fa-solid fa-pen-to-square" style={{ marginLeft: '0.5rem' }}></i>
+                        </button>
+                    </div>
+
+                    <div style={{
+                        background: 'white', borderRadius: '24px', padding: '1.75rem 2rem',
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        border: '1.5px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.02)'
+                    }}>
+                        <div>
+                            <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.2rem' }}>Attendance Module</div>
+                            <div style={{ color: '#64748b', fontSize: '0.9rem' }}>Track daily attendance, view leaves, and monitor presence.</div>
+                        </div>
+                        <button
+                            className="erp-btn"
+                            style={{ background: '#14b8a6', color: 'white', border: 'none', fontWeight: 700, borderRadius: '12px', padding: '0.75rem 1.25rem' }}
+                            onClick={handleEnterAttendance}
+                        >
+                            Enter Attendance <i className="fa-solid fa-calendar-check" style={{ marginLeft: '0.5rem' }}></i>
                         </button>
                     </div>
                 </div>

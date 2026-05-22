@@ -15,13 +15,15 @@ from auth import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     REFRESH_TOKEN_EXPIRE_DAYS,
     get_current_user,
-    oauth2_scheme
+    oauth2_scheme,
+    limiter
 )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.post("/login", response_model=schemas.TokenResponse)
+@limiter.limit("5/minute")
 def login(
     request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(), 
@@ -174,6 +176,7 @@ def login(
 
 
 @router.post("/register", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
+@limiter.limit("3/minute")
 def register(request: Request, payload: schemas.UserCreate, db: Session = Depends(get_db)):
     """
     Register a new user.
@@ -236,7 +239,8 @@ def register(request: Request, payload: schemas.UserCreate, db: Session = Depend
 
 
 @router.post("/refresh", response_model=schemas.TokenResponse)
-def refresh_token(payload: schemas.TokenRefreshRequest, db: Session = Depends(get_db)):
+@limiter.limit("10/minute")
+def refresh_token(request: Request, payload: schemas.TokenRefreshRequest, db: Session = Depends(get_db)):
     """
     Issue a new access token using a valid refresh token.
     Uses token rotation (issues a new refresh token as well).
@@ -342,3 +346,37 @@ def logout(
         db.commit()
 
     return {"message": f"User '{current_user.email}' logged out successfully"}
+
+from pydantic import BaseModel
+from jose import jwt, JWTError
+import os
+
+class VerifyTokenRequest(BaseModel):
+    token: str
+
+@router.post("/verify")
+def verify_token(payload: VerifyTokenRequest, db: Session = Depends(get_db)):
+    """
+    Verify a JWT token from another module.
+    Returns the decoded payload if valid.
+    """
+    try:
+        # Avoid circular imports, read secret directly or use from auth
+        JWT_SECRET = os.environ.get("JWT_SECRET")
+        decoded_payload = jwt.decode(payload.token, JWT_SECRET, algorithms=["HS256"])
+        
+        # Optionally verify against DB to ensure token wasn't revoked
+        db_token = db.query(models.UserToken).filter(
+            models.UserToken.token == payload.token,
+            models.UserToken.is_active == True
+        ).first()
+        
+        if not db_token:
+            raise HTTPException(status_code=401, detail="Token revoked or inactive")
+
+        return {
+            "valid": True,
+            "payload": decoded_payload
+        }
+    except JWTError as e:
+        raise HTTPException(status_code=401, detail=str(e))

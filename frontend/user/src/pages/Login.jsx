@@ -33,8 +33,8 @@ function Login() {
                         const role = user.role?.toLowerCase() || '';
                         const staffRoles = ['admin', 'principal', 'vice principal', 'hod', 'accountant', 'it admins', 'principals & vice principals', 'teaching staff', 'non-teaching staff', 'accountants', 'teacher'];
                         
-                        if (staffRoles.includes(role)) {
-                            window.location.href = `${import.meta.env.VITE_SIS_URL}/callback?user_id=${user.user_id}&role=${encodeURIComponent(user.role)}`;
+                        if (false) {
+                            // Dummy block to maintain structure if needed, or just remove
                         } else {
                             navigate('/welcome');
                         }
@@ -92,16 +92,7 @@ function Login() {
                     return '';
                 };
 
-                if (staffRoles.includes(role)) {
-                    // Normalize role for SIS compatibility (Map high-level staff to 'admin')
-                    let sisRole = 'staff';
-                    const adminRoles = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'];
-                    if (adminRoles.includes(role)) {
-                        sisRole = 'admin';
-                    }
-                    // Rule 3: Staff redirect directly to SIS Module Callback
-                    window.location.href = `${getModuleURL('SIS')}/callback?user_id=${res.data.user_id}&role=${sisRole}`;
-                } else if (role === 'fees admin') {
+                if (role === 'fees admin') {
                     // Rule 4: Fees Admin teleportation (with SSO Token)
                     window.location.href = `${getModuleURL('FEES')}/admin?token=${res.data.access_token}&user_id=${res.data.user_id}&role=admin&name=${encodeURIComponent(res.data.full_name)}`;
                 } else {

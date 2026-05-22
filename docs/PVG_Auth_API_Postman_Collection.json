@@ -1,0 +1,246 @@
+{
+	"info": {
+		"_postman_id": "c7a8b9c0-d1e2-4f3a-b5c6-d7e8f9a0b1c2",
+		"name": "PVG College Auth API",
+		"description": "Postman collection for testing the Authentication & User Management APIs running locally on http://127.0.0.1:8000",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "7. Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New User\",\n    \"email\": \"new_user@example.com\",\n    \"password\": \"secret123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Registers a new user and automatically assigns them the 'Student' role."
+					},
+					"response": []
+				},
+				{
+					"name": "1. Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.access_token) {",
+									"    pm.collectionVariables.set(\"token\", jsonData.access_token);",
+									"    console.log(\"Saved token to collection variables!\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "sai@example.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticates a user and automatically saves the JWT token to the collection variables for use in other requests."
+					},
+					"response": []
+				},
+				{
+					"name": "6. Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logs the user out. Requires Bearer token."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints related to user authentication (login/logout)."
+		},
+		{
+			"name": "Authorization",
+			"item": [
+				{
+					"name": "2. Get Roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/roles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles"
+							]
+						},
+						"description": "Returns all available roles."
+					},
+					"response": []
+				},
+				{
+					"name": "5. Assign Role",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 101,\n    \"role\": \"Admin\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/roles/assign",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"roles",
+								"assign"
+							]
+						},
+						"description": "Assigns a specific role to a user. Requires Bearer token."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints related to user roles and authorization."
+		},
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "3. Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Returns a list of all registered users."
+					},
+					"response": []
+				},
+				{
+					"name": "4. Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/101",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"101"
+							]
+						},
+						"description": "Returns details for a specific user."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing user accounts."
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"description": "Automatically populated by the Login request"
+		}
+	]
+}

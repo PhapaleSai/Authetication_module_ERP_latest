@@ -72,16 +72,7 @@ const Login = () => {
                     return '';
                 };
 
-                if (staffRoles.includes(role)) {
-                    // Normalize role for SIS compatibility (Map high-level staff to 'admin')
-                    let sisRole = 'staff';
-                    const adminRoles = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'];
-                    if (adminRoles.includes(role)) {
-                        sisRole = 'admin';
-                    }
-                    // Rule 3: Staff redirect directly to SIS Module Callback
-                    window.location.href = `${getModuleURL('SIS')}/callback?user_id=${data.user_id}&role=${sisRole}`;
-                } else if (role === 'fees admin') {
+                if (role === 'fees admin') {
                     // Rule 4: Fees Admin teleportation (with SSO Token)
                     window.location.href = `${getModuleURL('FEES')}/admin?token=${data.access_token}&user_id=${data.user_id}&role=admin&name=${encodeURIComponent(data.full_name)}`;
                 } else if (role === 'student' || role === 'students') {
