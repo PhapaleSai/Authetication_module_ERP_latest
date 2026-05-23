@@ -192,7 +192,9 @@ def get_audit_log(
                 user=display_user,
                 detail=f"Status: {entry.status}",
                 timestamp=(
-                    entry.login_time.strftime("%Y-%m-%d %H:%M:%S") if entry.login_time else ""
+                    entry.login_time.strftime("%Y-%m-%d %H:%M:%S")
+                    if entry.login_time
+                    else ""
                 ),
                 ip=entry.ip_address,
             )
@@ -359,7 +361,9 @@ def export_system_data(
                 "action": "Login",
                 "user": entry.user.email if entry.user else "unknown",
                 "timestamp": (
-                    entry.login_time.strftime("%Y-%m-%d %H:%M:%S") if entry.login_time else ""
+                    entry.login_time.strftime("%Y-%m-%d %H:%M:%S")
+                    if entry.login_time
+                    else ""
                 ),
                 "ip": entry.ip_address or "0.0.0.0",
                 "status": entry.status,
