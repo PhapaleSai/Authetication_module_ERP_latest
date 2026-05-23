@@ -33,5 +33,11 @@ jobs:
         mypy backend/ --strict || true
         
     - name: Test
+      env:
+        JWT_SECRET: ci-test-secret-not-for-production
+        DATABASE_URL: sqlite:///./test.db
+        ALGORITHM: HS256
+        ACCESS_TOKEN_EXPIRE_MINUTES: "60"
+        REFRESH_TOKEN_EXPIRE_DAYS: "7"
       run: |
         cd backend && pytest
