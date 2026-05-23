@@ -1,9 +1,7 @@
-import sys
-import os
-from sqlalchemy.orm import Session
-from database import SessionLocal, engine
+from database import SessionLocal
 import models
 from auth import get_password_hash
+
 
 def create_sis_data():
     db = SessionLocal()
@@ -16,19 +14,20 @@ def create_sis_data():
             "HODs",
             "Teaching Staff",
             "Non-Teaching Staff",
-            "Accountants"
+            "Accountants",
         ]
 
         print("--- Integrating SIS Module Roles and Users ---")
 
         for role_name in sis_roles:
             # 1. Ensure Role exists
-            role = db.query(models.Role).filter(models.Role.role_name == role_name).first()
+            role = (
+                db.query(models.Role).filter(models.Role.role_name == role_name).first()
+            )
             if not role:
                 print(f"Creating role: {role_name}")
                 role = models.Role(
-                    role_name=role_name,
-                    description=f"Role for {role_name} integration"
+                    role_name=role_name, description=f"Role for {role_name} integration"
                 )
                 db.add(role)
                 db.flush()  # To get the role_id
@@ -42,7 +41,9 @@ def create_sis_data():
             email_slug = role_name.lower().replace(" ", "_").replace("&", "and")
             email = f"{email_slug}@pvg.edu"
 
-            user = db.query(models.User).filter(models.User.username == username).first()
+            user = (
+                db.query(models.User).filter(models.User.username == username).first()
+            )
             if not user:
                 print(f"Creating user: {username}")
                 user = models.User(
@@ -50,7 +51,7 @@ def create_sis_data():
                     full_name=role_name,
                     email=email,
                     password_hash=get_password_hash(password),
-                    status=True
+                    status=True,
                 )
                 db.add(user)
                 db.flush()
@@ -58,17 +59,18 @@ def create_sis_data():
                 print(f"User already exists: {username}")
 
             # 3. Assign Role to User if not already assigned
-            user_role = db.query(models.UserRole).filter(
-                models.UserRole.user_id == user.user_id,
-                models.UserRole.role_id == role.role_id
-            ).first()
+            user_role = (
+                db.query(models.UserRole)
+                .filter(
+                    models.UserRole.user_id == user.user_id,
+                    models.UserRole.role_id == role.role_id,
+                )
+                .first()
+            )
 
             if not user_role:
                 print(f"Assigning role {role_name} to user {username}")
-                user_role = models.UserRole(
-                    user_id=user.user_id,
-                    role_id=role.role_id
-                )
+                user_role = models.UserRole(user_id=user.user_id, role_id=role.role_id)
                 db.add(user_role)
             else:
                 print(f"Role {role_name} already assigned to user {username}")
@@ -81,6 +83,7 @@ def create_sis_data():
         db.rollback()
     finally:
         db.close()
+
 
 if __name__ == "__main__":
     create_sis_data()

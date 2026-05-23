@@ -1,18 +1,21 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime, JSON
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from database import Base
+
 
 class AuditMixin:
     """
     Mixin to add audit fields to models.
     """
+
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     created_by = Column(String(150), nullable=True)
     updated_by = Column(String(150), nullable=True)
     created_from = Column(String(100), nullable=True)
     token_expiry = Column(DateTime, nullable=True)
+
 
 class TimestampMixin:
     created_at = Column(DateTime, default=func.now())
@@ -70,14 +73,20 @@ class Role(Base, AuditMixin):
     role_id = Column(Integer, primary_key=True, index=True)
     role_name = Column(String(100), unique=True, nullable=False)
     description = Column(String, nullable=True)
-    
+
     # Relationships
     user_roles = relationship("UserRole", back_populates="role")
     role_permissions = relationship("RolePermission", back_populates="role")
 
     @property
     def permissions(self):
-        return list(set(rp.permission.permission_name for rp in self.role_permissions if rp.permission))
+        return list(
+            set(
+                rp.permission.permission_name
+                for rp in self.role_permissions
+                if rp.permission
+            )
+        )
 
 
 class User(Base, AuditMixin):
@@ -120,9 +129,11 @@ class UserToken(Base, AuditMixin):
     token_id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.user_id"))
     token = Column(String, unique=True, index=True, nullable=False)
-    refresh_token = Column(String, unique=True, index=True, nullable=True) # Added refresh token
+    refresh_token = Column(
+        String, unique=True, index=True, nullable=True
+    )  # Added refresh token
     expiry_date = Column(DateTime, nullable=False)
-    refresh_token_expiry = Column(DateTime, nullable=True) # Added refresh token expiry
+    refresh_token_expiry = Column(DateTime, nullable=True)  # Added refresh token expiry
     is_active = Column(Boolean, default=True)
 
     user = relationship("User", back_populates="tokens")

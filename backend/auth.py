@@ -37,7 +37,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    expire = datetime.utcnow() + (
+        expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
     to_encode.update({"exp": expire, "aud": "pvg-erp"})
     return jwt.encode(to_encode, JWT_SECRET, algorithm=ALGORITHM)
 
@@ -51,7 +53,9 @@ def create_refresh_token(data: dict) -> str:
 
 def verify_refresh_token(token: str) -> Optional[dict]:
     try:
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM], options={"verify_aud": False})
+        payload = jwt.decode(
+            token, JWT_SECRET, algorithms=[ALGORITHM], options={"verify_aud": False}
+        )
         if payload.get("type") != "refresh":
             return None
         return payload
@@ -60,6 +64,7 @@ def verify_refresh_token(token: str) -> Optional[dict]:
 
 
 # ── User-based dependency (used by new auth/roles APIs) ──────────────────────
+
 
 def get_current_user(
     token: str = Depends(oauth2_scheme),
@@ -71,7 +76,9 @@ def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM], options={"verify_aud": False})
+        payload = jwt.decode(
+            token, JWT_SECRET, algorithms=[ALGORITHM], options={"verify_aud": False}
+        )
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
@@ -79,13 +86,13 @@ def get_current_user(
         raise credentials_exception
 
     # Check if token exists and is active in DB
-    db_token = db.query(models.UserToken).filter(
-        models.UserToken.token == token
-    ).first()
-    
+    db_token = (
+        db.query(models.UserToken).filter(models.UserToken.token == token).first()
+    )
+
     if not db_token or not db_token.is_active:
         raise credentials_exception
-        
+
     if db_token.expiry_date <= datetime.utcnow():
         db_token.is_active = False
         db.commit()
@@ -94,14 +101,15 @@ def get_current_user(
     user = db.query(models.User).filter(models.User.email == email).first()
     if user is None:
         raise credentials_exception
-    
+
     # Attach token expiry for audit purposes
     user.token_expiry = db_token.expiry_date
-    
+
     return user
 
 
 # ── Legacy Student-based dependency (kept for backward compat) ────────────────
+
 
 def get_current_student(
     token: str = Depends(oauth2_scheme),
@@ -113,14 +121,18 @@ def get_current_student(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM], options={"verify_aud": False})
+        payload = jwt.decode(
+            token, JWT_SECRET, algorithms=[ALGORITHM], options={"verify_aud": False}
+        )
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
 
-    student = db.query(models.Student).filter(models.Student.username == username).first()
+    student = (
+        db.query(models.Student).filter(models.Student.username == username).first()
+    )
     if student is None:
         raise credentials_exception
     return student

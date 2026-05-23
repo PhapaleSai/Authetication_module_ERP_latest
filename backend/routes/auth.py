@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Form, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
@@ -16,7 +16,7 @@ from auth import (
     REFRESH_TOKEN_EXPIRE_DAYS,
     get_current_user,
     oauth2_scheme,
-    limiter
+    limiter,
 )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -26,9 +26,9 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 @limiter.limit("5/minute")
 def login(
     request: Request,
-    form_data: OAuth2PasswordRequestForm = Depends(), 
+    form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
-    redirect_uri: str = None
+    redirect_uri: str = None,
 ):
     """
     Authenticate a user.
@@ -37,47 +37,61 @@ def login(
     if redirect_uri:
         allowed_urls = os.environ.get("ALLOWED_CALLBACK_URLS", "").split(",")
         # Check if redirect_uri starts with any allowed url
-        is_allowed = any(redirect_uri.startswith(allowed.strip()) for allowed in allowed_urls if allowed.strip())
+        is_allowed = any(
+            redirect_uri.startswith(allowed.strip())
+            for allowed in allowed_urls
+            if allowed.strip()
+        )
         if allowed_urls and not is_allowed:
             raise HTTPException(status_code=400, detail="Invalid redirect_uri")
 
     # Search strictly by email
-    user = db.query(models.User).filter(
-        models.User.email == form_data.username
-    ).first()
+    user = db.query(models.User).filter(models.User.email == form_data.username).first()
 
     # JIT Migration: If not found in users, check legacy students table strictly by email
     if not user:
-        legacy_student = db.query(models.Student).filter(
-            models.Student.email == form_data.username
-        ).first()
-        if legacy_student and verify_password(form_data.password, legacy_student.password_hash):
+        legacy_student = (
+            db.query(models.Student)
+            .filter(models.Student.email == form_data.username)
+            .first()
+        )
+        if legacy_student and verify_password(
+            form_data.password, legacy_student.password_hash
+        ):
             user = models.User(
                 username=legacy_student.username,
                 full_name=legacy_student.name,
                 email=legacy_student.email,
                 password_hash=legacy_student.password_hash,
                 created_by="migration",
-                created_from="legacy_login"
+                created_from="legacy_login",
             )
             db.add(user)
             db.commit()
             db.refresh(user)
-            
-            student_role = db.query(models.Role).filter(models.Role.role_name == "Student").first()
+
+            student_role = (
+                db.query(models.Role).filter(models.Role.role_name == "Student").first()
+            )
             if not student_role:
-                student_role = models.Role(role_name="Student", created_by="migration", created_from="legacy_login")
+                student_role = models.Role(
+                    role_name="Student",
+                    created_by="migration",
+                    created_from="legacy_login",
+                )
                 db.add(student_role)
                 db.commit()
                 db.refresh(student_role)
-                
-            db.add(models.UserRole(
-                user_id=user.user_id,
-                role_id=student_role.role_id,
-                created_by="migration",
-                created_from="legacy_login",
-                token_expiry=datetime.utcnow() + timedelta(days=365)
-            ))
+
+            db.add(
+                models.UserRole(
+                    user_id=user.user_id,
+                    role_id=student_role.role_id,
+                    created_by="migration",
+                    created_from="legacy_login",
+                    token_expiry=datetime.utcnow() + timedelta(days=365),
+                )
+            )
             db.commit()
 
     ip_address = request.client.host if request.client else "unknown"
@@ -92,7 +106,7 @@ def login(
             status="Failed",
             login_time=now,
             created_at=now,
-            updated_at=now
+            updated_at=now,
         )
         db.add(log_failed)
         db.commit()
@@ -111,20 +125,20 @@ def login(
         status="Success",
         login_time=now,
         created_at=now,
-        updated_at=now
+        updated_at=now,
     )
     db.add(log_success)
 
     # Extract roles and permissions
     user_roles = [ur.role.role_name for ur in user.user_roles if ur.role]
     primary_role = user_roles[0] if user_roles else "Guest"
-    
+
     # Flatten permissions from all roles
     permissions = []
     for ur in user.user_roles:
         if ur.role and ur.role.permissions:
             permissions.extend(ur.role.permissions)
-    permissions = list(set(permissions)) # Unique permissions
+    permissions = list(set(permissions))  # Unique permissions
 
     # Access Token
     access_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -135,7 +149,7 @@ def login(
             "role": primary_role,
             "user_id": user.user_id,
             "username": user.username,
-            "full_name": user.full_name
+            "full_name": user.full_name,
         },
         expires_delta=access_expires,
     )
@@ -146,7 +160,7 @@ def login(
 
     # CLEANUP: Remove ANY existing tokens for this user (to keep DB clean/no duplicates)
     db.query(models.UserToken).filter(models.UserToken.user_id == user.user_id).delete()
-    
+
     # Store NEW token in DB
     now = datetime.utcnow()
     db_token = models.UserToken(
@@ -160,14 +174,14 @@ def login(
         updated_at=now,
         created_by=user.email,
         created_from=request.client.host if request.client else "unknown",
-        token_expiry=now + access_expires
+        token_expiry=now + access_expires,
     )
     db.add(db_token)
-    
+
     # Update user audit info
     user.updated_by = user.email
     user.updated_at = now
-    
+
     db.commit()
 
     return {
@@ -184,29 +198,34 @@ def login(
     }
 
 
-@router.post("/register", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED
+)
 @limiter.limit("3/minute")
-def register(request: Request, payload: schemas.UserCreate, db: Session = Depends(get_db)):
+def register(
+    request: Request, payload: schemas.UserCreate, db: Session = Depends(get_db)
+):
     """
     Register a new user.
     New users get the 'Guest' role by default.
     """
     # Check if email is already registered
-    existing_user = db.query(models.User).filter(models.User.email == payload.email).first()
+    existing_user = (
+        db.query(models.User).filter(models.User.email == payload.email).first()
+    )
     if existing_user:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
         )
-    
+
     # Create new user with audit fields
     new_user = models.User(
         username=payload.username,
         full_name=payload.full_name,
         email=payload.email,
         password_hash=get_password_hash(payload.password),
-        created_by=payload.email, # Initial creation is by the user themselves
-        created_from=request.client.host if request.client else "unknown"
+        created_by=payload.email,  # Initial creation is by the user themselves
+        created_from=request.client.host if request.client else "unknown",
     )
     db.add(new_user)
     db.commit()
@@ -216,22 +235,25 @@ def register(request: Request, payload: schemas.UserCreate, db: Session = Depend
     guest_role = db.query(models.Role).filter(models.Role.role_name == "Guest").first()
     if not guest_role:
         guest_role = models.Role(
-            role_name="Guest", 
+            role_name="Guest",
             description="Default role with minimum permissions",
             created_by="system",
-            created_from="auto-provision"
+            created_from="auto-provision",
         )
         db.add(guest_role)
         db.commit()
         db.refresh(guest_role)
 
-    db.add(models.UserRole(
-        user_id=new_user.user_id, 
-        role_id=guest_role.role_id,
-        created_by="system",
-        created_from="auto-provision",
-        token_expiry=datetime.utcnow() + timedelta(days=365) # Long lived system auto-provision
-    ))
+    db.add(
+        models.UserRole(
+            user_id=new_user.user_id,
+            role_id=guest_role.role_id,
+            created_by="system",
+            created_from="auto-provision",
+            token_expiry=datetime.utcnow()
+            + timedelta(days=365),  # Long lived system auto-provision
+        )
+    )
     db.commit()
 
     # Create a dynamic response so it matches the UserOut schema
@@ -242,14 +264,18 @@ def register(request: Request, payload: schemas.UserCreate, db: Session = Depend
         email=new_user.email,
         role="Guest",
         created_at=new_user.created_at,
-        updated_at=new_user.updated_at
+        updated_at=new_user.updated_at,
     )
     return response_data
 
 
 @router.post("/refresh", response_model=schemas.TokenResponse)
 @limiter.limit("10/minute")
-def refresh_token(request: Request, payload: schemas.TokenRefreshRequest, db: Session = Depends(get_db)):
+def refresh_token(
+    request: Request,
+    payload: schemas.TokenRefreshRequest,
+    db: Session = Depends(get_db),
+):
     """
     Issue a new access token using a valid refresh token.
     Uses token rotation (issues a new refresh token as well).
@@ -261,21 +287,25 @@ def refresh_token(request: Request, payload: schemas.TokenRefreshRequest, db: Se
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid refresh token",
         )
-    
-    email = token_data.get("sub")
-    
+
+    token_data.get("sub")
+
     # 2. Check if the token exists and is active in our DB
-    db_token = db.query(models.UserToken).filter(
-        models.UserToken.refresh_token == payload.refresh_token,
-        models.UserToken.is_active == True
-    ).first()
-    
+    db_token = (
+        db.query(models.UserToken)
+        .filter(
+            models.UserToken.refresh_token == payload.refresh_token,
+            models.UserToken.is_active,
+        )
+        .first()
+    )
+
     if not db_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Refresh token not found or inactive",
         )
-    
+
     if db_token.refresh_token_expiry <= datetime.utcnow():
         db_token.is_active = False
         db.commit()
@@ -283,12 +313,12 @@ def refresh_token(request: Request, payload: schemas.TokenRefreshRequest, db: Se
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Refresh token expired",
         )
-    
+
     # 3. Get User and roles
     user = db_token.user
     user_roles = [ur.role.role_name for ur in user.user_roles if ur.role]
     primary_role = user_roles[0] if user_roles else "Guest"
-    
+
     # Flatten permissions
     permissions = []
     for ur in user.user_roles:
@@ -305,14 +335,14 @@ def refresh_token(request: Request, payload: schemas.TokenRefreshRequest, db: Se
             "role": primary_role,
             "user_id": user.user_id,
             "username": user.username,
-            "full_name": user.full_name
+            "full_name": user.full_name,
         },
         expires_delta=access_expires,
     )
-    
+
     refresh_expires = timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
     new_refresh_token = create_refresh_token(data={"sub": user.email})
-    
+
     # 5. UPDATE the existing row (No duplicates!)
     now = datetime.utcnow()
     db_token.token = new_access_token
@@ -320,8 +350,8 @@ def refresh_token(request: Request, payload: schemas.TokenRefreshRequest, db: Se
     db_token.expiry_date = now + access_expires
     db_token.refresh_token_expiry = now + refresh_expires
     db_token.updated_at = now
-    db_token.token_expiry = now + access_expires # Keep audit field in sync
-    
+    db_token.token_expiry = now + access_expires  # Keep audit field in sync
+
     db.commit()
 
     return {
@@ -340,14 +370,16 @@ def refresh_token(request: Request, payload: schemas.TokenRefreshRequest, db: Se
 
 @router.post("/logout", response_model=schemas.LogoutResponse)
 def logout(
-    current_user: models.User = Depends(get_current_user), 
+    current_user: models.User = Depends(get_current_user),
     token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """
     Logout endpoint. Deactivates the token in the database.
     """
-    db_token = db.query(models.UserToken).filter(models.UserToken.token == token).first()
+    db_token = (
+        db.query(models.UserToken).filter(models.UserToken.token == token).first()
+    )
     if db_token:
         db_token.is_active = False
         db_token.updated_by = current_user.email
@@ -356,12 +388,15 @@ def logout(
 
     return {"message": f"User '{current_user.email}' logged out successfully"}
 
-from pydantic import BaseModel
-from jose import jwt, JWTError
-import os
+
+from pydantic import BaseModel  # noqa: E402
+from jose import jwt, JWTError  # noqa: E402
+import os  # noqa: E402
+
 
 class VerifyTokenRequest(BaseModel):
     token: str
+
 
 @router.post("/verify")
 def verify_token(payload: VerifyTokenRequest, db: Session = Depends(get_db)):
@@ -372,23 +407,30 @@ def verify_token(payload: VerifyTokenRequest, db: Session = Depends(get_db)):
     try:
         # Avoid circular imports, read secret directly or use from auth
         JWT_SECRET = os.environ.get("JWT_SECRET")
-        decoded_payload = jwt.decode(payload.token, JWT_SECRET, algorithms=["HS256"], options={"verify_aud": False})
-        
+        decoded_payload = jwt.decode(
+            payload.token,
+            JWT_SECRET,
+            algorithms=["HS256"],
+            options={"verify_aud": False},
+        )
+
         # Optionally verify against DB to ensure token wasn't revoked
-        db_token = db.query(models.UserToken).filter(
-            models.UserToken.token == payload.token,
-            models.UserToken.is_active == True
-        ).first()
-        
+        db_token = (
+            db.query(models.UserToken)
+            .filter(
+                models.UserToken.token == payload.token,
+                models.UserToken.is_active,
+            )
+            .first()
+        )
+
         if not db_token:
             raise HTTPException(status_code=401, detail="Token revoked or inactive")
 
-        return {
-            "valid": True,
-            "payload": decoded_payload
-        }
+        return {"valid": True, "payload": decoded_payload}
     except JWTError as e:
         raise HTTPException(status_code=401, detail=str(e))
+
 
 @router.get("/me")
 def get_me(current_user: models.User = Depends(get_current_user)):
@@ -404,5 +446,5 @@ def get_me(current_user: models.User = Depends(get_current_user)):
         "username": current_user.username,
         "full_name": current_user.full_name,
         "role": primary_role,
-        "roles": roles
+        "roles": roles,
     }

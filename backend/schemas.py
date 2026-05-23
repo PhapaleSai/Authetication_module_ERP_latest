@@ -2,8 +2,8 @@ from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel, EmailStr
 
-
 # ── Auth ────────────────────────────────────────────────────────────────────
+
 
 class LoginRequest(BaseModel):
     email: EmailStr
@@ -32,6 +32,7 @@ class TokenRefreshRequest(BaseModel):
 
 
 # ── System ──────────────────────────────────────────────────────────────────
+
 
 class ModuleCreate(BaseModel):
     module_name: str
@@ -102,6 +103,7 @@ class LoginLogOut(BaseModel):
 
 # ── Roles ───────────────────────────────────────────────────────────────────
 
+
 class RoleOut(BaseModel):
     role_id: int
     role_name: str
@@ -121,6 +123,7 @@ class AssignRoleResponse(BaseModel):
 
 # ── Users ───────────────────────────────────────────────────────────────────
 
+
 class UserCreate(BaseModel):
     username: str
     full_name: Optional[str] = None
@@ -128,6 +131,7 @@ class UserCreate(BaseModel):
     password: str
     department: Optional[str] = None
     phone_number: Optional[str] = None
+
 
 class UserOut(BaseModel):
     user_id: int
@@ -146,6 +150,7 @@ class UserOut(BaseModel):
 
 
 # ── Legacy schemas (kept for backward compatibility) ─────────────────────────
+
 
 class StudentCreate(BaseModel):
     name: str

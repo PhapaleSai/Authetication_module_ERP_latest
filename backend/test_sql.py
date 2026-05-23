@@ -5,7 +5,7 @@ dsn = "postgresql://postgres:sai123@localhost:5432/pvg_auth"
 try:
     conn = psycopg2.connect(dsn)
     cursor = conn.cursor()
-    
+
     # Try the failing SELECT
     sql = """
     SELECT students.id AS students_id, students.name AS students_name, students.email AS students_email, 
@@ -17,7 +17,7 @@ try:
     """
     cursor.execute(sql)
     print("SELECT successful!")
-    
+
     conn.close()
 except Exception as e:
     print(f"SELECT failed: {e}")

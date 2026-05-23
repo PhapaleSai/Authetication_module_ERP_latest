@@ -1,6 +1,6 @@
 import sqlite3
 
-db_path = 'd:/taking_my_code_out/backend/pvg_local.db'
+db_path = "d:/taking_my_code_out/backend/pvg_local.db"
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 

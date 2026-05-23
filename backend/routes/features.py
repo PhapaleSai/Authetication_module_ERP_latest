@@ -9,16 +9,18 @@ from auth import oauth2_scheme
 
 router = APIRouter(prefix="/features", tags=["Features"])
 
+
 @router.get("", response_model=List[schemas.FeatureOut])
 def get_features(db: Session = Depends(get_db)):
     """Get Features"""
     return db.query(models.Feature).all()
 
+
 @router.post("", response_model=schemas.FeatureOut)
 def create_feature(
-    payload: schemas.FeatureCreate, 
-    db: Session = Depends(get_db), 
-    token: str = Depends(oauth2_scheme)
+    payload: schemas.FeatureCreate,
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
 ):
     """Create Feature"""
     new_feature = models.Feature(**payload.dict())
@@ -27,23 +29,24 @@ def create_feature(
     db.refresh(new_feature)
     return new_feature
 
+
 @router.delete("/{feature_id}")
 def delete_feature(
-    feature_id: int, 
-    db: Session = Depends(get_db), 
-    token: str = Depends(oauth2_scheme)
+    feature_id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
 ):
     """Delete Feature"""
-    feature = db.query(models.Feature).filter(models.Feature.feature_id == feature_id).first()
+    feature = (
+        db.query(models.Feature).filter(models.Feature.feature_id == feature_id).first()
+    )
     if not feature:
         raise HTTPException(status_code=404, detail="Feature not found")
-        
+
     if feature.permissions:
         raise HTTPException(
-            status_code=400, 
-            detail="Cannot delete this feature because permissions are attached to it. Please delete the associated permissions first."
+            status_code=400,
+            detail="Cannot delete this feature because permissions are attached to it. Please delete the associated permissions first.",
         )
-        
+
     db.delete(feature)
     db.commit()
     return {"message": "Feature deleted"}

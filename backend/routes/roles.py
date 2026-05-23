@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 import models
@@ -27,23 +27,23 @@ def get_roles_catalog(db: Session = Depends(get_db)):
     """
     roles = db.query(models.Role).all()
     role_names = [r.role_name.lower() for r in roles]
-    
+
     # Ensure Faculty exists in the catalog as requested by other modules
     if "faculty" not in role_names:
         faculty_role = models.Role(
             role_name="faculty",
             description="Canonical role for Attendance and Academic Planning",
             created_by="system",
-            created_from="auto-provision"
+            created_from="auto-provision",
         )
         db.add(faculty_role)
         db.commit()
         db.refresh(faculty_role)
         roles.append(faculty_role)
-        
+
     return {
         "catalog": [r.role_name for r in roles],
-        "message": "Canonical role catalog for cross-module SSO mapping."
+        "message": "Canonical role catalog for cross-module SSO mapping.",
     }
 
 
@@ -72,23 +72,26 @@ def assign_role(
         "accountant": 50,
         "tpo": 50,
         "student": 10,
-        "guest": 0
+        "guest": 0,
     }
-    
+
     current_level = hierarchy.get(current_user.role.lower(), 0)
     target_level = hierarchy.get(role.role_name.lower(), 0)
-    
+
     # You cannot assign a role higher or equal to your own, unless you are admin
-    if current_user.role.lower() != 'admin' and target_level >= current_level:
-        raise HTTPException(status_code=403, detail="Forbidden: Cannot assign a role higher or equal to your own")
+    if current_user.role.lower() != "admin" and target_level >= current_level:
+        raise HTTPException(
+            status_code=403,
+            detail="Forbidden: Cannot assign a role higher or equal to your own",
+        )
 
     db.query(models.UserRole).filter(models.UserRole.user_id == user.user_id).delete()
-    
+
     new_user_role = models.UserRole(
-        user_id=user.user_id, 
+        user_id=user.user_id,
         role_id=role.role_id,
         created_by=current_user.email,
-        token_expiry=getattr(current_user, 'token_expiry', None)
+        token_expiry=getattr(current_user, "token_expiry", None),
     )
     db.add(new_user_role)
     db.commit()
@@ -104,7 +107,7 @@ def update_role_permissions(
 ):
     """Update permissions for a specific role."""
     # Simple role check here since it's an admin operation
-    if current_user.role not in ['admin', 'vice_principal']:
+    if current_user.role not in ["admin", "vice_principal"]:
         raise HTTPException(status_code=403, detail="Forbidden")
 
     role = db.query(models.Role).filter(models.Role.role_id == role_id).first()
@@ -112,15 +115,20 @@ def update_role_permissions(
         raise HTTPException(status_code=404, detail="Role not found")
 
     # Clear existing
-    db.query(models.RolePermission).filter(models.RolePermission.role_id == role_id).delete()
+    db.query(models.RolePermission).filter(
+        models.RolePermission.role_id == role_id
+    ).delete()
 
     # Add new
     for perm_name in payload:
-        perm = db.query(models.Permission).filter(models.Permission.permission_name == perm_name).first()
+        perm = (
+            db.query(models.Permission)
+            .filter(models.Permission.permission_name == perm_name)
+            .first()
+        )
         if perm:
             new_rp = models.RolePermission(
-                role_id=role_id,
-                permission_id=perm.permission_id
+                role_id=role_id, permission_id=perm.permission_id
             )
             db.add(new_rp)
 
