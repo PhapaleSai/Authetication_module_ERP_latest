@@ -14,3 +14,4 @@ faker==24.4.0
 email-validator==2.1.1
 slowapi
 python-json-logger
+httpx
