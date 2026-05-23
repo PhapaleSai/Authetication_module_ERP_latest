@@ -53,7 +53,9 @@ const Login = () => {
                 if (adminRoles.includes(data.role?.toLowerCase())) {
                     targetRole = 'admin';
                 }
-                window.location.href = `${redirectUri}?user_id=${data.user_id}&name=${encodeURIComponent(data.full_name)}&role=${targetRole}`;
+                const emailParam = encodeURIComponent(data.email || "");
+                const phoneParam = encodeURIComponent(data.phone || data.mobile || data.phone_number || data.mobile_number || "");
+                window.location.href = `${redirectUri}?user_id=${data.user_id}&name=${encodeURIComponent(data.full_name)}&role=${targetRole}&email=${emailParam}&phone=${phoneParam}`;
             } else {
                 // Unified Role-based Redirect
                 const role = data.role?.toLowerCase() || '';

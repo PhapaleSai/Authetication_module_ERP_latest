@@ -62,6 +62,26 @@ def assign_role(
     if not role:
         raise HTTPException(status_code=400, detail="Role not found")
 
+    # Role Hierarchy Enforcement
+    hierarchy = {
+        "admin": 100,
+        "principal": 90,
+        "vice_principal": 80,
+        "hod": 70,
+        "faculty": 60,
+        "accountant": 50,
+        "tpo": 50,
+        "student": 10,
+        "guest": 0
+    }
+    
+    current_level = hierarchy.get(current_user.role.lower(), 0)
+    target_level = hierarchy.get(role.role_name.lower(), 0)
+    
+    # You cannot assign a role higher or equal to your own, unless you are admin
+    if current_user.role.lower() != 'admin' and target_level >= current_level:
+        raise HTTPException(status_code=403, detail="Forbidden: Cannot assign a role higher or equal to your own")
+
     db.query(models.UserRole).filter(models.UserRole.user_id == user.user_id).delete()
     
     new_user_role = models.UserRole(

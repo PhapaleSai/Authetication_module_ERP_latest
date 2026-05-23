@@ -1,4 +1,8 @@
-from fastapi import FastAPI, Request
+import uuid
+import logging
+import time
+from pythonjsonlogger import jsonlogger
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -15,6 +19,36 @@ app = FastAPI(
     version="2.0.0",
     description="Authentication & Authorization API with User Management",
 )
+
+# ── Logging Setup ────────────────────────────────────────────────────────────
+logger = logging.getLogger("pvg_auth")
+logger.setLevel(logging.INFO)
+logHandler = logging.StreamHandler()
+formatter = jsonlogger.JsonFormatter('%(asctime)s %(levelname)s %(name)s %(message)s')
+logHandler.setFormatter(formatter)
+if not logger.handlers:
+    logger.addHandler(logHandler)
+
+# ── Middleware ───────────────────────────────────────────────────────────────
+@app.middleware("http")
+async def request_id_and_logging_middleware(request: Request, call_next):
+    request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
+    request.state.request_id = request_id
+    
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    
+    logger.info("request_completed", extra={
+        "request_id": request_id,
+        "method": request.method,
+        "url": str(request.url),
+        "status_code": response.status_code,
+        "process_time_ms": round(process_time * 1000, 2)
+    })
+    
+    response.headers["X-Request-ID"] = request_id
+    return response
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
@@ -45,3 +79,21 @@ app.include_router(student.router)    # /api/signup, /api/login (old), /api/me, 
 @app.get("/")
 def root():
     return {"message": "PVG College Auth API v2 is running — visit /docs for the interactive API docs"}
+
+@app.get("/healthz", tags=["Observability"])
+def healthz():
+    """Liveness probe"""
+    return {"status": "ok"}
+
+@app.get("/readyz", tags=["Observability"])
+def readyz():
+    """Readiness probe"""
+    from sqlalchemy import text
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return {"status": "ready"}
+    except Exception as e:
+        logger.error("db_not_ready", extra={"error": str(e)})
+        from fastapi import HTTPException
+        raise HTTPException(status_code=503, detail="Database not ready")

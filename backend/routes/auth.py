@@ -27,11 +27,20 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 def login(
     request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(), 
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    redirect_uri: str = None
 ):
     """
     Authenticate a user.
     """
+    # Validate callback URL if provided
+    if redirect_uri:
+        allowed_urls = os.environ.get("ALLOWED_CALLBACK_URLS", "").split(",")
+        # Check if redirect_uri starts with any allowed url
+        is_allowed = any(redirect_uri.startswith(allowed.strip()) for allowed in allowed_urls if allowed.strip())
+        if allowed_urls and not is_allowed:
+            raise HTTPException(status_code=400, detail="Invalid redirect_uri")
+
     # Search strictly by email
     user = db.query(models.User).filter(
         models.User.email == form_data.username
@@ -363,7 +372,7 @@ def verify_token(payload: VerifyTokenRequest, db: Session = Depends(get_db)):
     try:
         # Avoid circular imports, read secret directly or use from auth
         JWT_SECRET = os.environ.get("JWT_SECRET")
-        decoded_payload = jwt.decode(payload.token, JWT_SECRET, algorithms=["HS256"])
+        decoded_payload = jwt.decode(payload.token, JWT_SECRET, algorithms=["HS256"], options={"verify_aud": False})
         
         # Optionally verify against DB to ensure token wasn't revoked
         db_token = db.query(models.UserToken).filter(
@@ -380,3 +389,20 @@ def verify_token(payload: VerifyTokenRequest, db: Session = Depends(get_db)):
         }
     except JWTError as e:
         raise HTTPException(status_code=401, detail=str(e))
+
+@router.get("/me")
+def get_me(current_user: models.User = Depends(get_current_user)):
+    """
+    Return the currently authenticated user's profile and roles.
+    Used by Frontend AuthGate to verify session on page renders.
+    """
+    roles = [ur.role.role_name for ur in current_user.user_roles if ur.role]
+    primary_role = roles[0] if roles else "Guest"
+    return {
+        "user_id": current_user.user_id,
+        "email": current_user.email,
+        "username": current_user.username,
+        "full_name": current_user.full_name,
+        "role": primary_role,
+        "roles": roles
+    }

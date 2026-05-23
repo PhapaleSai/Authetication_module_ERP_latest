@@ -1,5 +1,15 @@
 # Root gitignore
+.env
 .ENV
 node_modules/
 venv/
+.venv/
 __pycache__/
+*.zip
+*.mp4
+ngrok*
+dist/
+build/
+bin/
+scratch/
+temp_*/

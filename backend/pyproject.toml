@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "pvg-auth"
+version = "1.0.0"
+description = "Auth Module for PVG ERP"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.mypy]
+strict = true
+
+[tool.pytest.ini_options]
+addopts = "--cov=. --cov-report=term-missing --cov-fail-under=80"
+testpaths = ["tests"]

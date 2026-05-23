@@ -28,7 +28,9 @@ function Login() {
                 .then((res) => {
                     const user = res.data;
                     if (redirectUri) {
-                        window.location.href = `${redirectUri}?user_id=${user.user_id}&name=${encodeURIComponent(user.full_name)}&role=${encodeURIComponent(user.role)}`;
+                        const emailParam = encodeURIComponent(user.email || "");
+                        const phoneParam = encodeURIComponent(user.phone || user.mobile || user.phone_number || user.mobile_number || "");
+                        window.location.href = `${redirectUri}?user_id=${user.user_id}&name=${encodeURIComponent(user.full_name)}&role=${encodeURIComponent(user.role)}&email=${emailParam}&phone=${phoneParam}`;
                     } else {
                         const role = user.role?.toLowerCase() || '';
                         const staffRoles = ['admin', 'principal', 'vice principal', 'hod', 'accountant', 'it admins', 'principals & vice principals', 'teaching staff', 'non-teaching staff', 'accountants', 'teacher'];
@@ -74,7 +76,9 @@ function Login() {
                 if (adminRoles.includes(res.data.role?.toLowerCase())) {
                     targetRole = 'admin';
                 }
-                window.location.href = `${redirectUri}?user_id=${res.data.user_id}&name=${encodeURIComponent(res.data.full_name)}&role=${targetRole}`;
+                const emailParam = encodeURIComponent(res.data.email || "");
+                const phoneParam = encodeURIComponent(res.data.phone || res.data.mobile || res.data.phone_number || res.data.mobile_number || "");
+                window.location.href = `${redirectUri}?user_id=${res.data.user_id}&name=${encodeURIComponent(res.data.full_name)}&role=${targetRole}&email=${emailParam}&phone=${phoneParam}`;
             } else {
                 const role = res.data.role?.toLowerCase() || '';
                 const staffRoles = ['principal', 'vice principal', 'hod', 'accountant', 'it admins', 'principals & vice principals', 'teaching staff', 'non-teaching staff', 'accountants', 'teacher'];
