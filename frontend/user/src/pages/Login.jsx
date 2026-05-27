@@ -1,11 +1,22 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import api from '../api';
 import TiltCard from '../components/TiltCard';
 
 function Login() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [form, setForm] = useState({ username: '', password: '' });
+
+    // Set registered details if redirected from signup page
+    useEffect(() => {
+        if (location.state?.email) {
+            setForm({
+                username: location.state.email,
+                password: location.state.password || ''
+            });
+        }
+    }, [location.state]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -171,19 +182,20 @@ function Login() {
 
                     <form onSubmit={handleSubmit}>
                         <div className="erp-form-group">
-                            <label htmlFor="username" style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.75rem', display: 'block' }}>Username or Email</label>
+                            <label htmlFor="username" style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.75rem', display: 'block' }}>REGISTERED EMAIL-ID</label>
                             <div style={{ position: 'relative' }}>
-                                <i className="fa-solid fa-user" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
+                                <i className="fa-solid fa-envelope" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
                                 <input
                                     id="username"
-                                    type="text"
+                                    type="email"
                                     name="username"
                                     className="erp-form-control"
                                     style={{ paddingLeft: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a' }}
-                                    placeholder="Enter your username or email"
+                                    placeholder="Your registered email address"
                                     value={form.username}
                                     onChange={handleChange}
                                     required
+                                    autoComplete="email"
                                 />
                             </div>
                         </div>
@@ -198,7 +210,7 @@ function Login() {
                                     name="password"
                                     className="erp-form-control"
                                     style={{ paddingLeft: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a' }}
-                                    placeholder="Enter your password"
+                                    placeholder="••••••••"
                                     value={form.password}
                                     onChange={handleChange}
                                     required

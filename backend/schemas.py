@@ -125,7 +125,7 @@ class AssignRoleResponse(BaseModel):
 
 
 class UserCreate(BaseModel):
-    username: str
+    username: Optional[str] = None
     full_name: Optional[str] = None
     email: EmailStr
     password: str
@@ -156,7 +156,7 @@ class StudentCreate(BaseModel):
     name: str
     email: EmailStr
     phone: str
-    username: str
+    username: Optional[str] = None
     password: str
 
 
@@ -171,7 +171,6 @@ class StudentOut(BaseModel):
     email: Optional[str] = None
     phone: str
     username: str
-    access_token: Optional[str] = None
 
     class Config:
         from_attributes = True

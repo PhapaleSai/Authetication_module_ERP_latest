@@ -60,30 +60,14 @@ def login(
         if allowed_urls and not is_allowed:
             raise HTTPException(status_code=400, detail="Invalid redirect_uri")
 
-    # Search by email or username
-    from sqlalchemy import or_
+    # Search strictly by email
+    user = db.query(models.User).filter(models.User.email == form_data.username).first()
 
-    user = (
-        db.query(models.User)
-        .filter(
-            or_(
-                models.User.email == form_data.username,
-                models.User.username == form_data.username,
-            )
-        )
-        .first()
-    )
-
-    # JIT Migration: If not found in users, check legacy students table by email or username
+    # JIT Migration: If not found in users, check legacy students table strictly by email
     if not user:
         legacy_student = (
             db.query(models.Student)
-            .filter(
-                or_(
-                    models.Student.email == form_data.username,
-                    models.Student.username == form_data.username,
-                )
-            )
+            .filter(models.Student.email == form_data.username)
             .first()
         )
         if legacy_student and verify_password(
@@ -240,18 +224,29 @@ def register(
     Register a new user.
     New users get the 'Guest' role by default.
     """
+    username = payload.username or payload.email
     # Check if email is already registered
     existing_user = (
-        db.query(models.User).filter(models.User.email == payload.email).first()
+        db.query(models.User)
+        .filter(
+            (models.User.email == payload.email) | (models.User.username == username)
+        )
+        .first()
     )
     if existing_user:
+        if existing_user.email == payload.email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered",
+            )
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already registered",
         )
 
     # Create new user with audit fields
     new_user = models.User(
-        username=payload.username,
+        username=username,
         full_name=payload.full_name,
         email=payload.email,
         password_hash=get_password_hash(payload.password),

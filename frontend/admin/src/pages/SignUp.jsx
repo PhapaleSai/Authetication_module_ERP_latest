@@ -10,7 +10,6 @@ function SignUp() {
         name: '',
         email: '',
         phone: '',
-        username: '',
         password: '',
     });
     const [error, setError] = useState('');
@@ -25,9 +24,12 @@ function SignUp() {
         setError('');
         setLoading(true);
         try {
-            const res = await api.post('/signup', form);
-            localStorage.setItem('token', res.data.access_token);
-            navigate('/welcome');
+            const payload = {
+                ...form,
+                username: form.email
+            };
+            await api.post('/signup', payload);
+            navigate('/login', { state: { email: form.email, password: form.password } });
         } catch (err) {
             setError(err.response?.data?.detail || 'Sign up failed. Please try again.');
         } finally {
@@ -111,7 +113,7 @@ function SignUp() {
                                         name="email"
                                         className="erp-form-control"
                                         style={{ paddingLeft: '2.8rem' }}
-                                        placeholder="Enter your email address"
+                                        placeholder="user@example.com"
                                         value={form.email}
                                         onChange={handleChange}
                                         required
@@ -125,28 +127,8 @@ function SignUp() {
                                     type="tel"
                                     name="phone"
                                     className="erp-form-control"
-                                    placeholder="Enter your 10-digit phone number"
+                                    placeholder="9876543210"
                                     value={form.phone}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <hr style={{ border: 'none', borderTop: '1px solid var(--erp-border)', margin: '1.5rem 0' }} />
-
-                        <div className="erp-form-group">
-                            <label htmlFor="username">Choose Username</label>
-                            <div style={{ position: 'relative' }}>
-                                <i className="fa-solid fa-at" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.4 }}></i>
-                                <input
-                                    id="username"
-                                    type="text"
-                                    name="username"
-                                    className="erp-form-control"
-                                    style={{ paddingLeft: '2.8rem' }}
-                                    placeholder="Choose a unique username"
-                                    value={form.username}
                                     onChange={handleChange}
                                     required
                                 />
@@ -163,7 +145,7 @@ function SignUp() {
                                     name="password"
                                     className="erp-form-control"
                                     style={{ paddingLeft: '2.8rem' }}
-                                    placeholder="Enter a strong password"
+                                    placeholder="••••••••"
                                     value={form.password}
                                     onChange={handleChange}
                                     required

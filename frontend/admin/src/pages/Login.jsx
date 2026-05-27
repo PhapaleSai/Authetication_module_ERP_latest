@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../AuthContext';
 
@@ -8,6 +8,17 @@ const Login = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Set registered details if redirected from signup page
+    useEffect(() => {
+        if (location.state?.email) {
+            setCredentials({
+                username: location.state.email,
+                password: location.state.password || ''
+            });
+        }
+    }, [location.state]);
     const { setUser } = useAuth();
 
 
@@ -146,34 +157,35 @@ const Login = () => {
 
                     <form onSubmit={handleSubmit}>
                         <div className="erp-form-group">
-                            <label htmlFor="username">Username or Email</label>
+                            <label htmlFor="username">REGISTERED EMAIL-ID</label>
                             <div style={{ position: 'relative' }}>
-                                <i className="fa-solid fa-user" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
+                                <i className="fa-solid fa-envelope" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
                                 <input
                                     id="username"
-                                    type="text"
+                                    type="email"
                                     name="username"
                                     className="erp-form-control"
                                     style={{ paddingLeft: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a', background: '#f8fafc', border: '1.5px solid #e2e8f0' }}
-                                    placeholder="Enter your username or email"
+                                    placeholder="Your registered email address"
                                     value={credentials.username}
                                     onChange={handleChange}
                                     required
+                                    autoComplete="email"
                                 />
                             </div>
                         </div>
 
                         <div className="erp-form-group">
-                            <label htmlFor="password">Password</label>
+                            <label htmlFor="password">Secret Key</label>
                             <div style={{ position: 'relative' }}>
-                                <i className="fa-solid fa-lock" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
+                                <i className="fa-solid fa-fingerprint" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
                                 <input
                                     id="password"
                                     type="password"
                                     name="password"
                                     className="erp-form-control"
                                     style={{ paddingLeft: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a', background: '#f8fafc', border: '1.5px solid #e2e8f0' }}
-                                    placeholder="Enter your password"
+                                    placeholder="•••••"
                                     value={credentials.password}
                                     onChange={handleChange}
                                     required
