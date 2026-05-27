@@ -7,6 +7,7 @@ function Login() {
     const navigate = useNavigate();
     const location = useLocation();
     const [form, setForm] = useState({ username: '', password: '' });
+    const [showPassword, setShowPassword] = useState(false);
 
     // Set registered details if redirected from signup page
     useEffect(() => {
@@ -206,15 +207,35 @@ function Login() {
                                 <i className="fa-solid fa-key" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
                                 <input
                                     id="password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     name="password"
                                     className="erp-form-control"
-                                    style={{ paddingLeft: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a' }}
+                                    style={{ paddingLeft: '3.2rem', paddingRight: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a' }}
                                     placeholder="••••••••"
                                     value={form.password}
                                     onChange={handleChange}
                                     required
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '1.25rem',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        opacity: 0.5,
+                                        color: 'inherit',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        padding: 0
+                                    }}
+                                >
+                                    <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} style={{ fontSize: '1.1rem' }}></i>
+                                </button>
                             </div>
                         </div>
 

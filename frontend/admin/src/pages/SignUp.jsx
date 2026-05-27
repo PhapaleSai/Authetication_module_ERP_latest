@@ -12,6 +12,7 @@ function SignUp() {
         phone: '',
         password: '',
     });
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -141,15 +142,35 @@ function SignUp() {
                                 <i className="fa-solid fa-lock" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.4 }}></i>
                                 <input
                                     id="password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     name="password"
                                     className="erp-form-control"
-                                    style={{ paddingLeft: '2.8rem' }}
+                                    style={{ paddingLeft: '2.8rem', paddingRight: '2.8rem' }}
                                     placeholder="••••••••"
                                     value={form.password}
                                     onChange={handleChange}
                                     required
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '1rem',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        opacity: 0.5,
+                                        color: 'inherit',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        padding: 0
+                                    }}
+                                >
+                                    <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                                </button>
                             </div>
                             <PasswordStrength password={form.password} />
                         </div>

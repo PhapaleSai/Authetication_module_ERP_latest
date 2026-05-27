@@ -5,6 +5,7 @@ import { useAuth } from '../AuthContext';
 
 const Login = () => {
     const [credentials, setCredentials] = useState({ username: '', password: '' });
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -132,7 +133,7 @@ const Login = () => {
                 <div style={{ zIndex: 2, textAlign: 'center' }}>
                     <h1 style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.02em', margin: 0 }}>Portal.</h1>
                     <p style={{ fontSize: '1.1rem', opacity: 0.7, marginTop: '1rem', fontWeight: 300, maxWidth: '300px' }}>
-                        Unified Identity & Access Management for PVG College of Science
+                        Unified Student & Applicant Gateway for PVG College of Science
                     </p>
                 </div>
                 
@@ -143,13 +144,18 @@ const Login = () => {
 
             <div className="erp-auth-page__form">
                 <div className="erp-auth-box animate-premium" style={{ animationDelay: '0.1s' }}>
-                    <div className="erp-auth-box__header">
-                        <h2 style={{ fontSize: '1.75rem', fontWeight: 700 }}>Welcome Back</h2>
-                        <p style={{ marginTop: '0.5rem', opacity: 0.6 }}>Please sign in to your campus account</p>
+                    <div className="erp-auth-box__header" style={{ textAlign: 'left', marginBottom: '2.5rem' }}>
+                        <h2 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#0f172a' }}>Welcome Back</h2>
+                        <p style={{ marginTop: '0.5rem', opacity: 0.6, color: '#64748b' }}>Access your academic and admission profile</p>
                     </div>
 
                     {error && (
-                        <div className="erp-alert erp-alert--danger animate-premium" style={{ marginBottom: '2rem', borderRadius: '12px' }}>
+                        <div style={{
+                            background: '#fee2e2', color: '#ef4444', padding: '1rem',
+                            borderRadius: '12px', marginBottom: '2rem', fontSize: '0.88rem',
+                            display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 500,
+                            border: '1px solid rgba(239, 68, 68, 0.1)'
+                        }} className="animate-premium">
                             <i className="fa-solid fa-circle-exclamation"></i>
                             {error}
                         </div>
@@ -157,7 +163,7 @@ const Login = () => {
 
                     <form onSubmit={handleSubmit}>
                         <div className="erp-form-group">
-                            <label htmlFor="username">REGISTERED EMAIL-ID</label>
+                            <label htmlFor="username" style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.75rem', display: 'block' }}>REGISTERED EMAIL-ID</label>
                             <div style={{ position: 'relative' }}>
                                 <i className="fa-solid fa-envelope" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
                                 <input
@@ -165,7 +171,7 @@ const Login = () => {
                                     type="email"
                                     name="username"
                                     className="erp-form-control"
-                                    style={{ paddingLeft: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a', background: '#f8fafc', border: '1.5px solid #e2e8f0' }}
+                                    style={{ paddingLeft: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a' }}
                                     placeholder="Your registered email address"
                                     value={credentials.username}
                                     onChange={handleChange}
@@ -181,15 +187,35 @@ const Login = () => {
                                 <i className="fa-solid fa-fingerprint" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
                                 <input
                                     id="password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     name="password"
                                     className="erp-form-control"
-                                    style={{ paddingLeft: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a', background: '#f8fafc', border: '1.5px solid #e2e8f0' }}
+                                    style={{ paddingLeft: '3.2rem', paddingRight: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a', background: '#f8fafc', border: '1.5px solid #e2e8f0' }}
                                     placeholder="•••••"
                                     value={credentials.password}
                                     onChange={handleChange}
                                     required
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '1.25rem',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        background: 'none',
+                                        border: 'none',
+                                        cursor: 'pointer',
+                                        opacity: 0.5,
+                                        color: 'inherit',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        padding: 0
+                                    }}
+                                >
+                                    <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} style={{ fontSize: '1.1rem' }}></i>
+                                </button>
                             </div>
                         </div>
 
