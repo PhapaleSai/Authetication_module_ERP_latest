@@ -171,6 +171,7 @@ class StudentOut(BaseModel):
     email: Optional[str] = None
     phone: str
     username: str
+    access_token: Optional[str] = None
 
     class Config:
         from_attributes = True

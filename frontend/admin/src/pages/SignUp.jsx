@@ -111,7 +111,7 @@ function SignUp() {
                                         name="email"
                                         className="erp-form-control"
                                         style={{ paddingLeft: '2.8rem' }}
-                                        placeholder="user@example.com"
+                                        placeholder="Enter your email address"
                                         value={form.email}
                                         onChange={handleChange}
                                         required
@@ -125,7 +125,7 @@ function SignUp() {
                                     type="tel"
                                     name="phone"
                                     className="erp-form-control"
-                                    placeholder="9876543210"
+                                    placeholder="Enter your 10-digit phone number"
                                     value={form.phone}
                                     onChange={handleChange}
                                     required
@@ -145,7 +145,7 @@ function SignUp() {
                                     name="username"
                                     className="erp-form-control"
                                     style={{ paddingLeft: '2.8rem' }}
-                                    placeholder="username_123"
+                                    placeholder="Choose a unique username"
                                     value={form.username}
                                     onChange={handleChange}
                                     required
@@ -163,7 +163,7 @@ function SignUp() {
                                     name="password"
                                     className="erp-form-control"
                                     style={{ paddingLeft: '2.8rem' }}
-                                    placeholder="••••••••"
+                                    placeholder="Enter a strong password"
                                     value={form.password}
                                     onChange={handleChange}
                                     required

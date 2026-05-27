@@ -146,35 +146,34 @@ const Login = () => {
 
                     <form onSubmit={handleSubmit}>
                         <div className="erp-form-group">
-                            <label htmlFor="username">REGISTERED EMAIL-ID</label>
+                            <label htmlFor="username">Username or Email</label>
                             <div style={{ position: 'relative' }}>
-                                <i className="fa-solid fa-envelope" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
+                                <i className="fa-solid fa-user" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
                                 <input
                                     id="username"
-                                    type="email"
+                                    type="text"
                                     name="username"
                                     className="erp-form-control"
                                     style={{ paddingLeft: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a', background: '#f8fafc', border: '1.5px solid #e2e8f0' }}
-                                    placeholder="Your registered email address"
+                                    placeholder="Enter your username or email"
                                     value={credentials.username}
                                     onChange={handleChange}
                                     required
-                                    autoComplete="email"
                                 />
                             </div>
                         </div>
 
                         <div className="erp-form-group">
-                            <label htmlFor="password">Secret Key</label>
+                            <label htmlFor="password">Password</label>
                             <div style={{ position: 'relative' }}>
-                                <i className="fa-solid fa-fingerprint" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
+                                <i className="fa-solid fa-lock" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
                                 <input
                                     id="password"
                                     type="password"
                                     name="password"
                                     className="erp-form-control"
                                     style={{ paddingLeft: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a', background: '#f8fafc', border: '1.5px solid #e2e8f0' }}
-                                    placeholder="•••••"
+                                    placeholder="Enter your password"
                                     value={credentials.password}
                                     onChange={handleChange}
                                     required

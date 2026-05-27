@@ -60,14 +60,30 @@ def login(
         if allowed_urls and not is_allowed:
             raise HTTPException(status_code=400, detail="Invalid redirect_uri")
 
-    # Search strictly by email
-    user = db.query(models.User).filter(models.User.email == form_data.username).first()
+    # Search by email or username
+    from sqlalchemy import or_
 
-    # JIT Migration: If not found in users, check legacy students table strictly by email
+    user = (
+        db.query(models.User)
+        .filter(
+            or_(
+                models.User.email == form_data.username,
+                models.User.username == form_data.username,
+            )
+        )
+        .first()
+    )
+
+    # JIT Migration: If not found in users, check legacy students table by email or username
     if not user:
         legacy_student = (
             db.query(models.Student)
-            .filter(models.Student.email == form_data.username)
+            .filter(
+                or_(
+                    models.Student.email == form_data.username,
+                    models.Student.username == form_data.username,
+                )
+            )
             .first()
         )
         if legacy_student and verify_password(
