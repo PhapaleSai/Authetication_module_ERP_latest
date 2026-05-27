@@ -1,7 +1,0 @@
-version: "3"
-agent:
-    authtoken: 3CWaKkfYzQwLQzjs4cwmCUhOVif_2xxMscyHAKpK5fXcFMoie
-tunnels:
-    frontend:
-        proto: http
-        addr: 5173

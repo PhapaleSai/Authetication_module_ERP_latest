@@ -1,4 +1,5 @@
 import uuid
+import os
 import logging
 import time
 from pythonjsonlogger import jsonlogger
@@ -21,7 +22,16 @@ from routes import (
 )
 from auth import limiter
 
-# Create all tables on startup (including new users & roles tables)
+# ── Sentry (optional — only active when SENTRY_DSN is set in env) ─────────────
+_sentry_dsn = os.getenv("SENTRY_DSN")
+if _sentry_dsn:
+    try:
+        import sentry_sdk
+
+        sentry_sdk.init(dsn=_sentry_dsn, traces_sample_rate=0.2)
+    except ImportError:
+        pass  # sentry-sdk not installed — silently skip
+
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(

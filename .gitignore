@@ -13,3 +13,6 @@ build/
 bin/
 scratch/
 temp_*/
+# Root-level JS artifacts (frontend has its own package.json)
+/package.json
+/package-lock.json

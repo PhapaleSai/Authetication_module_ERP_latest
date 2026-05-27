@@ -22,8 +22,23 @@ from auth import (
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
+def _login_rate_key(request: Request) -> str:
+    """Key by IP + email to slow targeted attacks without punishing shared-NAT users."""
+    ip = request.client.host if request.client else "unknown"
+    # form_data is not yet parsed here; read raw body field
+    body = ""
+    try:
+        body = request._form.get("username", "") if hasattr(request, "_form") else ""
+    except Exception:
+        pass
+    return f"{ip}:{body}"
+
+
 @router.post("/login", response_model=schemas.TokenResponse)
-@limiter.limit("5/minute")
+@limiter.limit(
+    "5/minute",
+    key_func=lambda request: f"{request.client.host if request.client else 'unknown'}",
+)
 def login(
     request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -399,7 +414,10 @@ class VerifyTokenRequest(BaseModel):
 
 
 @router.post("/verify")
-def verify_token(payload: VerifyTokenRequest, db: Session = Depends(get_db)):
+@limiter.limit("1000/minute")
+def verify_token(
+    request: Request, payload: VerifyTokenRequest, db: Session = Depends(get_db)
+):
     """
     Verify a JWT token from another module.
     Returns the decoded payload if valid.
