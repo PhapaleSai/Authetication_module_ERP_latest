@@ -7,7 +7,7 @@ import schemas
 from database import get_db
 from auth import get_current_user
 
-router = APIRouter(prefix="/users", tags=["User Management"])
+router = APIRouter(prefix="/users", tags=["User Management"], dependencies=[Depends(get_current_user)])
 
 
 @router.get("/me", response_model=schemas.UserOut)

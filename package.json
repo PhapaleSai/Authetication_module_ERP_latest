@@ -4,15 +4,12 @@
   "description": "PVG Authentication and Authorization System",
   "private": true,
   "workspaces": [
-    "frontend/admin",
-    "frontend/user"
+    "frontend"
   ],
   "scripts": {
     "dev:backend": "cd backend && venv\\Scripts\\python.exe -m uvicorn main:app --reload --port 8000",
-    "dev:admin": "npm run dev --workspace=frontend/admin",
-    "dev:user": "npm run dev --workspace=frontend/user",
-    "dev:frontend": "concurrently \"npm run dev:admin\" \"npm run dev:user\"",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:admin\" \"npm run dev:user\""
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

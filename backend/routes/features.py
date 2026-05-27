@@ -5,9 +5,9 @@ from sqlalchemy.orm import Session
 import models
 import schemas
 from database import get_db
-from auth import oauth2_scheme
+from auth import oauth2_scheme, get_current_user
 
-router = APIRouter(prefix="/features", tags=["Features"])
+router = APIRouter(prefix="/features", tags=["Features"], dependencies=[Depends(get_current_user)])
 
 
 @router.get("", response_model=List[schemas.FeatureOut])

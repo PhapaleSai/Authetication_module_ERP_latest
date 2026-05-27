@@ -248,8 +248,10 @@ INSERT INTO roles (role_name, description) VALUES
   ('vice_principal',    'Deputy head of the institution'),
   ('hod',               'Head of Department'),
   ('faculty',           'Teaching staff'),
+  ('accountant',        'Fees & Finance'),
+  ('tpo',               'Placement Officer'),
   ('student',           'Enrolled student'),
-  ('placement_officer', 'Manages placements and alumni relations')
+  ('guest',             'Unenrolled / Pre-signup')
 ON CONFLICT (role_name) DO NOTHING;
 
 -- ============================================================
@@ -415,5 +417,5 @@ JOIN   permissions p ON p.permission_name IN (
          'Send Department Notice - CREATE',
          'View Notifications - VIEW'
        )
-WHERE  r.role_name = 'placement_officer'
+WHERE  r.role_name = 'tpo'
 ON CONFLICT (role_id, permission_id) DO NOTHING;

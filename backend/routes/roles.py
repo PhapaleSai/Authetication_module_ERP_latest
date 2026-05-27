@@ -11,7 +11,7 @@ router = APIRouter(prefix="/roles", tags=["Authorization"])
 
 
 @router.get("", response_model=List[schemas.RoleOut])
-def get_roles(db: Session = Depends(get_db)):
+def get_roles(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     """
     Return all available roles.
     """
@@ -23,23 +23,35 @@ def get_roles(db: Session = Depends(get_db)):
 def get_roles_catalog(db: Session = Depends(get_db)):
     """
     Publish a definitive, canonical catalog of roles for all modules.
-    Ensures 'faculty' exists as a core role.
+    Ensures all 9 canonical roles exist in the database.
     """
+    canonical_roles = {
+        "admin": "System administrator with full access",
+        "principal": "Head of the institution",
+        "vice_principal": "Deputy head of the institution",
+        "hod": "Head of Department",
+        "faculty": "Teaching staff",
+        "accountant": "Fees & Finance",
+        "tpo": "Placement Officer",
+        "student": "Enrolled student",
+        "guest": "Unenrolled / Pre-signup"
+    }
+
     roles = db.query(models.Role).all()
     role_names = [r.role_name.lower() for r in roles]
 
-    # Ensure Faculty exists in the catalog as requested by other modules
-    if "faculty" not in role_names:
-        faculty_role = models.Role(
-            role_name="faculty",
-            description="Canonical role for Attendance and Academic Planning",
-            created_by="system",
-            created_from="auto-provision",
-        )
-        db.add(faculty_role)
-        db.commit()
-        db.refresh(faculty_role)
-        roles.append(faculty_role)
+    for rname, desc in canonical_roles.items():
+        if rname not in role_names:
+            new_role = models.Role(
+                role_name=rname,
+                description=desc,
+                created_by="system",
+                created_from="auto-provision",
+            )
+            db.add(new_role)
+            db.commit()
+            db.refresh(new_role)
+            roles.append(new_role)
 
     return {
         "catalog": [r.role_name for r in roles],

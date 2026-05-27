@@ -17,6 +17,7 @@ from auth import (
     get_current_user,
     oauth2_scheme,
     limiter,
+    JWT_SECRET,
 )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -405,8 +406,6 @@ def verify_token(payload: VerifyTokenRequest, db: Session = Depends(get_db)):
     Returns the decoded payload if valid.
     """
     try:
-        # Avoid circular imports, read secret directly or use from auth
-        JWT_SECRET = os.environ.get("JWT_SECRET")
         decoded_payload = jwt.decode(
             payload.token,
             JWT_SECRET,

@@ -5,7 +5,7 @@ from typing import Optional
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
@@ -15,9 +15,18 @@ import models
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-limiter = Limiter(key_func=get_remote_address)
+def ip_email_key_func(request: Request) -> str:
+    ip = request.client.host if request.client else "127.0.0.1"
+    email = getattr(request.state, "email", None)
+    if email:
+        return f"{ip}:{email}"
+    return ip
 
-JWT_SECRET = os.getenv("JWT_SECRET", "fallback-secret-change-in-production")
+limiter = Limiter(key_func=ip_email_key_func)
+
+if "JWT_SECRET" not in os.environ:
+    raise KeyError("JWT_SECRET environment variable is required but not set")
+JWT_SECRET = os.environ["JWT_SECRET"]
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
 REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))

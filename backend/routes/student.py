@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 import schemas
-from auth import get_current_student
+from auth import get_current_student, get_current_user
 from database import get_db
 import models
 
@@ -106,6 +106,17 @@ def get_me(current_student: models.Student = Depends(get_current_student)):
 
 
 @router.get("/students", response_model=List[schemas.StudentOut])
-def get_all_students(db: Session = Depends(get_db)):
+def get_all_students(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
     """Admin endpoint — returns all registered students."""
+    allowed = {"admin", "vice_principal", "hod", "principal", "placement_officer", "tpo"}
+    user_role = (current_user.role or "").lower().replace(" ", "_")
+    allowed_normalized = {role.lower().replace(" ", "_") for role in allowed}
+    if user_role not in allowed_normalized:
+        raise HTTPException(
+            status_code=403,
+            detail="Forbidden: Administrative access required.",
+        )
     return db.query(models.Student).all()

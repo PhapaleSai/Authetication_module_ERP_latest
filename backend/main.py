@@ -1,8 +1,12 @@
 import uuid
 import logging
 import time
+import os
+import json
+import math
 from pythonjsonlogger import jsonlogger
 from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -65,14 +69,63 @@ async def request_id_and_logging_middleware(request: Request, call_next):
     return response
 
 
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+def custom_rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
+    retry_after = getattr(exc, "retry_after", 60)
+    if retry_after is not None:
+        retry_after = math.ceil(retry_after)
+    else:
+        retry_after = 60
+    
+    response = JSONResponse(
+        status_code=429,
+        content={"detail": f"Rate limit exceeded: {exc.detail}"}
+    )
+    response.headers["Retry-After"] = str(retry_after)
+    return response
 
-# Allow React dev server and production nginx
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, custom_rate_limit_exceeded_handler)
+
+@app.middleware("http")
+async def rate_limit_email_extractor(request: Request, call_next):
+    path = request.url.path
+    if path in ["/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/api/login", "/api/signup"]:
+        try:
+            body = await request.body()
+            request._body = body
+            
+            email = None
+            try:
+                data = json.loads(body)
+                email = data.get("email") or data.get("username")
+            except json.JSONDecodeError:
+                import urllib.parse
+                form_data = urllib.parse.parse_qs(body.decode("utf-8"))
+                email_list = form_data.get("username") or form_data.get("email")
+                if email_list:
+                    email = email_list[0]
+            
+            if email:
+                request.state.email = email
+        except Exception:
+            pass
+            
+    return await call_next(request)
+
+allowed_origins_raw = os.getenv("ALLOWED_CALLBACK_URLS", "")
+allowed_origins = [origin.strip() for origin in allowed_origins_raw.split(",") if origin.strip()]
+if not allowed_origins:
+    allowed_origins = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5176",
+    ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allowed all for easy localtunnel access
-    allow_credentials=False,  # MUST be False when allow_origins is '*'
+    allow_origins=allowed_origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
