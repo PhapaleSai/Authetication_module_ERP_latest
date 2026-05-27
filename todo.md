@@ -69,6 +69,13 @@ After cleanup, root should contain ONLY: `README.md`, `run.sh`, `run.ps1`, `.env
 ### H5. Naming consistency (rename to canonical)
 **Why:** Your repo name has a typo (`Authetication`), a redundant suffix (`_latest`), and mixed-case + snake_case in one string. Other modules can't even spell-check `git clone <your-url>` correctly. See full naming rules in `docs/PROJECT_CONTEXT.md`.
 
+**Filename + folder-name conventions — audit the WHOLE repo, not just the renames below.** This is the *same principle every module follows*; full table in the "Naming conventions" section of `docs/PROJECT_CONTEXT.md`. Walk the tree file-by-file and rename anything that doesn't match:
+- **Folders:** all lowercase, **no spaces** — `backend/`, `frontend/`, `docs/` (never `sis-frontend/`, `placement-frontend/`, `Requirement Documents/`). Python packages `snake_case`. No double-nested same-name folders (`x/x/`).
+- **Python files:** `snake_case.py` (e.g. `student_service.py`); classes inside are `PascalCase`.
+- **React components:** `PascalCase.jsx`/`.tsx` (e.g. `AuthGate.jsx`). **JS utilities:** `camelCase.js` (e.g. `formatDate.js`). **Config files:** lowercase (`vite.config.js`, `tailwind.config.js`).
+- **Test files:** `test_<unit>.py` (Python) / `<Component>.test.tsx` (JS).
+- **Same concept = same name everywhere** at the wire: `student_id` (never `studentId`/`sid`), `user_id`, `department_id`. DB column name = API JSON key, both `snake_case`.
+
 **Renames to apply:**
 
 | Current | Target | Notes |
