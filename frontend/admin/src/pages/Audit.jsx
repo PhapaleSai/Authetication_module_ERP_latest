@@ -30,7 +30,7 @@ const Audit = () => {
         <div style={{ animation: 'fadeInSlideUp 0.5s ease-out', padding: '1rem 0' }}>
             <div style={{
                 marginBottom: '1rem', padding: '1.25rem 2rem',
-                background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                background: 'linear-gradient(135deg, var(--erp-primary) 0%, var(--erp-primary-dark) 100%)',
                 borderRadius: '24px', color: 'white', position: 'relative', overflow: 'hidden',
                 boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
             }}>
