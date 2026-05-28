@@ -13,6 +13,7 @@ import Audit from './pages/Audit';
 import UserProfile from './pages/UserProfile';
 import Export from './pages/Export';
 import Welcome from './pages/student/Welcome';
+import { ADMIN_ROLES, SUPER_ADMIN_ROLES, getModuleURL } from './utils/config';
 
 // AuthContext is imported from ./AuthContext.js
 
@@ -74,7 +75,7 @@ function ProtectedRoute({ children, allowedRoles }) {
         return <Navigate to="/login" replace />;
     }
 
-    if (allowedRoles && !allowedRoles.map(r => r.toLowerCase()).includes(user.role?.toLowerCase())) {
+    if (allowedRoles && (!user.role || !allowedRoles.map(r => r.toLowerCase()).includes(user.role.toLowerCase()))) {
         return <Navigate to="/dashboard" replace />;
     }
 
@@ -120,8 +121,8 @@ function Layout({ children }) {
         return 'Portal';
     };
 
-    const isAdminRole = ['admin', 'vice_principal', 'hod'].includes(user.role?.toLowerCase());
-    const isSuperAdmin = ['admin', 'vice_principal'].includes(user.role?.toLowerCase());
+    const isAdminRole = user.role ? ADMIN_ROLES.includes(user.role.toLowerCase()) : false;
+    const isSuperAdmin = user.role ? SUPER_ADMIN_ROLES.includes(user.role.toLowerCase()) : false;
 
     return (
         <div className="erp-layout">
@@ -160,37 +161,9 @@ function Layout({ children }) {
 
                     <div className="erp-nav-label">Integrations</div>
                             {(() => {
-                                const getModuleURL = (type) => {
-                                    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                                    if (isLocal) {
-                                        if (type === 'ADMISSION') return 'http://localhost:3000';
-                                        if (type === 'SIS') return 'http://localhost:5174';
-                                        if (type === 'FEES') return 'http://localhost:5176';
-                                        if (type === 'PLACEMENT') return 'http://localhost:5177';
-                                        if (type === 'TIMETABLE') return 'http://localhost:5178';
-                                        if (type === 'NOTIFICATION') return 'http://localhost:5179';
-                                        if (type === 'ALUMNI') return 'http://localhost:5180';
-                                        if (type === 'ACADEMIC') return 'http://localhost:5181';
-                                        if (type === 'FEEDBACK') return 'http://localhost:5182';
-                                        if (type === 'EXAMINATION') return 'http://localhost:5183';
-                                        if (type === 'ATTENDANCE') return 'http://localhost:5184';
-                                    }
-                                    if (type === 'ADMISSION') return import.meta.env.VITE_ADMISSION_URL;
-                                    if (type === 'SIS') return import.meta.env.VITE_SIS_URL;
-                                    if (type === 'FEES') return import.meta.env.VITE_FEES_URL;
-                                    if (type === 'PLACEMENT') return import.meta.env.VITE_PLACEMENT_URL;
-                                    if (type === 'TIMETABLE') return import.meta.env.VITE_TIMETABLE_URL;
-                                    if (type === 'NOTIFICATION') return import.meta.env.VITE_NOTIFICATION_URL;
-                                    if (type === 'ALUMNI') return import.meta.env.VITE_ALUMNI_URL;
-                                    if (type === 'ACADEMIC') return import.meta.env.VITE_ACADEMIC_URL;
-                                    if (type === 'FEEDBACK') return import.meta.env.VITE_FEEDBACK_URL;
-                                    if (type === 'EXAMINATION') return import.meta.env.VITE_EXAMINATION_URL;
-                                    if (type === 'ATTENDANCE') return import.meta.env.VITE_ATTENDANCE_URL;
-                                    return '';
-                                };
                                 const uid = user?.user_id || '';
                                 const name = encodeURIComponent(user?.full_name || user?.username || '');
-                                const isAdmin = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'].includes(user?.role?.toLowerCase());
+                                const isAdmin = user?.role ? ADMIN_ROLES.includes(user.role.toLowerCase()) : false;
                                 const roleParam = isAdmin ? 'admin' : (user?.role || 'staff');
                                 const currentToken = localStorage.getItem('token') || '';
                                 
@@ -273,7 +246,7 @@ function Layout({ children }) {
                         {/* Removed Topbar Quick-Launch buttons - moved to sidebar */}
 
                         <div style={{ height: '24px', width: '1px', background: 'var(--erp-border)' }}></div>
-                        <div className="erp-topbar__user" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.4rem 0.8rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => navigate(`/users/${user.user_id}`)}>
+                        <div className="erp-topbar__user" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.4rem 0.8rem', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => isAdminRole ? navigate(`/users/${user.user_id}`) : navigate('/dashboard')}>
                             <div className="erp-avatar erp-avatar--sm" style={{ width: '32px', height: '32px', fontSize: '0.85rem' }}>{(user.email || user.username)?.[0]?.toUpperCase()}</div>
                             <span className="erp-topbar__user-name" style={{ fontWeight: 600, fontSize: '0.9rem' }}>{user.email || user.username}</span>
                         </div>

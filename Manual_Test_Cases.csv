@@ -1,0 +1,38 @@
+Test ID,Category,Scenario,Steps,Expected Result,Status / Notes
+REG-01,User Registration,Successful Registration,"1. Navigate to Sign Up page.
+2. Enter valid details (unique email, secure password, name).
+3. Submit the form.",User is created successfully. Redirected to Login page or auto-logged in.,PASS
+REG-02,User Registration,Duplicate Email,"1. Navigate to Sign Up page.
+2. Enter an email that is already registered.
+3. Submit the form.",Registration fails. Error message shown: 'Email already registered' or similar.,FAIL
+REG-03,User Registration,Weak Password,"1. Navigate to Sign Up page.
+2. Enter valid email but weak password (e.g., '123').
+3. Submit the form.",Form validation fails. Error message shown prompting for a stronger password.,PASS
+REG-04,User Registration,Missing Fields,"1. Navigate to Sign Up page.
+2. Leave required fields blank.
+3. Submit the form.",Form validation fails. User is prompted to fill required fields.,PASS
+LOG-01,User Authentication,Successful Login,"1. Navigate to Login page.
+2. Enter valid email and password.
+3. Submit the form.",Login succeeds. JWT access and refresh tokens are granted. User is redirected to dashboard.,PASS
+LOG-02,User Authentication,Invalid Password,"1. Enter valid email but incorrect password.
+2. Submit the form.",Login fails. Generic error message: 'Invalid credentials'.,PASS
+LOG-03,User Authentication,Unregistered Email,"1. Enter an email that does not exist in the database.
+2. Submit the form.",Login fails. Generic error message: 'Invalid credentials'.,PASS
+LOG-04,User Authentication,Case Sensitivity,1. Enter registered email with different casing and valid password.,Login succeeds.,PASS
+TOK-01,Session & Token,Token Refresh,"1. Login successfully.
+2. Wait for access token to expire.
+3. Attempt API call.","Frontend intercepts 401, uses refresh token to get new access token, retries request.",PASS
+TOK-02,Session & Token,Invalid Token Access,"1. Modify or clear JWT token.
+2. Access protected route.",Access denied. Redirected to Login.,PASS
+TOK-03,Session & Token,Expired Refresh Token,"1. Let both tokens expire.
+2. Attempt API call.",Access denied. Redirected to Login.,PASS
+RBC-01,Role-Based Access,Admin Access,"1. Login with Admin account.
+2. Access Admin dashboard.
+3. View users/stats.",Access granted. Admin data fetched and displayed.,PASS
+RBC-02,Role-Based Access,User Access to Admin,"1. Login with User account.
+2. Attempt to access Admin dashboard.",Access denied (403). Blocked from admin data.,PASS
+RBC-03,Role-Based Access,User Dashboard,"1. Login with User account.
+2. Access User Portal.",Access granted. User profile loaded.,PASS
+OUT-01,Logout Flow,Successful Logout,1. Click Logout button.,Session destroyed. Tokens cleared. Redirected to Login.,PASS
+OUT-02,Logout Flow,Post-Logout Access,"1. Logout successfully.
+2. Use browser Back button to return to dashboard.",User cannot view protected data. Redirected back to Login.,PASS

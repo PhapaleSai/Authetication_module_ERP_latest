@@ -1,0 +1,25 @@
+"Test ID","Category","Scenario","Steps","Expected Result","Status / Notes"
+"AUTHZ-01","Role Assignment","Super Admin Role Assignment","1. Login as Super Admin.
+2. Assign 'Admin' role to a standard User.
+3. Verify the role change.","Role is successfully assigned and updated in the system.",""
+"AUTHZ-02","Role Assignment","Unauthorized Role Assignment","1. Login as a standard User.
+2. Attempt to assign the 'Admin' role to yourself or another user via API.","Access denied (403 Forbidden). The system blocks the action.",""
+"AUTHZ-03","Route Protection","Access Public Route","1. Do not log in (ensure no tokens are stored).
+2. Access a public endpoint (e.g. /login, /signup).","Endpoint is accessed successfully.",""
+"AUTHZ-04","Route Protection","Access Protected Route (No Token)","1. Do not log in (no token).
+2. Access a protected endpoint (e.g. /me).","Access denied (401 Unauthorized).",""
+"AUTHZ-05","Route Protection","Access Protected Route (Valid Token)","1. Log in to acquire a valid access token.
+2. Access a protected endpoint with the token in the Authorization header.","Access granted. The requested resource is returned.",""
+"AUTHZ-06","RBAC Middleware","Access Admin Endpoint (as Admin)","1. Log in with an Admin account.
+2. Access an Admin-only endpoint (e.g. /admin/users or /admin/stats).","Access granted. Admin data is returned successfully.",""
+"AUTHZ-07","RBAC Middleware","Access Admin Endpoint (as User)","1. Log in with a standard User account.
+2. Attempt to access an Admin-only endpoint.","Access denied (403 Forbidden). The user is blocked due to insufficient roles.",""
+"AUTHZ-08","Granular Permissions","Execute Action with Permission","1. Log in with an account that has a specific permission (e.g. 'delete_user').
+2. Execute the action that requires this permission.","Action is executed successfully.",""
+"AUTHZ-09","Granular Permissions","Execute Action without Permission","1. Log in with an account that lacks a specific permission.
+2. Attempt to execute the action.","Access denied (403 Forbidden).",""
+"AUTHZ-10","JWT Security","Forged JWT Signature","1. Copy a valid JWT token.
+2. Modify its payload (e.g., change role to 'Admin') without the secret key.
+3. Send it to a protected route.","Access denied (401 Unauthorized). Signature verification fails.",""
+"AUTHZ-11","JWT Security","Cross-Module JWT Verification","1. Generate a token via the Auth Module.
+2. Verify the token in a separate module using the shared JWT_SECRET.","Token is successfully decoded and verified locally without network calls.",""

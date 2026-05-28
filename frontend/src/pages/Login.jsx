@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../AuthContext';
+import { ADMIN_ROLES, getModuleURL } from '../utils/config';
 
 const Login = () => {
     const [credentials, setCredentials] = useState({ username: '', password: '' });
@@ -49,8 +50,7 @@ const Login = () => {
             if (redirectUri && data.role?.toLowerCase() !== 'admin') {
                 // Normalize role for external modules (Admission/SIS/Fees)
                 let targetRole = data.role;
-                const adminRoles = ['admin', 'it admins', 'principal', 'principals & vice principals', 'hod'];
-                if (adminRoles.includes(data.role?.toLowerCase())) {
+                if (data.role && ADMIN_ROLES.includes(data.role.toLowerCase())) {
                     targetRole = 'admin';
                 }
                 const emailParam = encodeURIComponent(data.email || "");
@@ -59,20 +59,6 @@ const Login = () => {
             } else {
                 // Unified Role-based Redirect
                 const role = data.role?.toLowerCase() || '';
-                const staffRoles = ['principal', 'vice principal', 'hod', 'accountant', 'it admins', 'principals & vice principals', 'teaching staff', 'non-teaching staff', 'accountants', 'teacher'];
-                
-                const getModuleURL = (type) => {
-                    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                    if (isLocal) {
-                        if (type === 'SIS') return 'http://localhost:5174';
-                        if (type === 'FEES') return 'http://localhost:5176';
-                        if (type === 'ADMISSION') return 'http://localhost:3000';
-                    }
-                    if (type === 'SIS') return import.meta.env.VITE_SIS_URL;
-                    if (type === 'FEES') return import.meta.env.VITE_FEES_URL;
-                    if (type === 'ADMISSION') return import.meta.env.VITE_ADMISSION_URL;
-                    return '';
-                };
 
                 if (role === 'fees admin') {
                     // Rule 4: Fees Admin teleportation (with SSO Token)
