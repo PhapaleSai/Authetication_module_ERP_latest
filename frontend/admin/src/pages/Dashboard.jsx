@@ -141,6 +141,11 @@ const Dashboard = () => {
         return ['Good Night', 'fa-moon-stars'];
     };
     const [greeting, greetIcon] = getGreeting();
+    const displayRole = user?.role?.toLowerCase() === 'hod'
+        ? 'HOD'
+        : (user?.role
+            ? user.role.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')
+            : 'Admin');
 
     const sparkData = [
         { day: 'Mon', users: 3, sessions: 8 },
@@ -200,7 +205,7 @@ const Dashboard = () => {
                                 <span>System Status: <span style={{ color: '#4ade80', fontWeight: 700 }}>Optimal</span></span>
                             </div>
                             <h1 style={{ fontSize: '3rem', fontWeight: 800, margin: '0 0 0.5rem', letterSpacing: '-0.04em', background: 'linear-gradient(to right, #fff, #cbd5e1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                                {greeting}, Admin
+                                {greeting}, {displayRole}
                             </h1>
                             <p style={{ opacity: 0.6, fontSize: '1.1rem', fontWeight: 400, margin: 0, maxWidth: '600px', lineHeight: 1.6 }}>
                                 Welcome to the PVG College of Science Command Center. Your administrative oversight covers <strong>{stats?.total_users || 0} enrolled users</strong> across <strong>{stats?.total_roles || 0} active RBAC policies</strong>.
