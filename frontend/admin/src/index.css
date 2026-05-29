@@ -607,6 +607,19 @@ a:hover { color: var(--erp-primary-dark); }
   box-shadow: var(--erp-focus-ring);
 }
 
+.pink-glow-input {
+  border: 1.5px solid #f9a8d4 !important;
+  box-shadow: 0 0 10px rgba(244, 114, 182, 0.1) !important;
+  background-color: #fffafb !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+.pink-glow-input:focus {
+  border-color: #ec4899 !important;
+  box-shadow: 0 0 15px rgba(236, 72, 153, 0.4), 0 0 0 3px rgba(236, 72, 153, 0.15) !important;
+  background-color: #ffffff !important;
+}
+
 .erp-form-control::placeholder   { color: #bbb; }
 select.erp-form-control           { cursor: pointer; }
 textarea.erp-form-control         { height: auto; min-height: var(--erp-textarea-h); padding: var(--erp-space-2) 13px; resize: vertical; }

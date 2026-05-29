@@ -163,14 +163,14 @@ const Login = () => {
 
                     <form onSubmit={handleSubmit}>
                         <div className="erp-form-group">
-                            <label htmlFor="username" style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.75rem', display: 'block' }}>REGISTERED EMAIL-ID</label>
+                            <label htmlFor="username" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--erp-primary)', marginBottom: '0.75rem', display: 'block' }}>Email</label>
                             <div style={{ position: 'relative' }}>
                                 <i className="fa-solid fa-envelope" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
                                 <input
                                     id="username"
                                     type="email"
                                     name="username"
-                                    className="erp-form-control"
+                                    className="erp-form-control pink-glow-input"
                                     style={{ paddingLeft: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a' }}
                                     placeholder="Your registered email address"
                                     value={credentials.username}
@@ -182,15 +182,15 @@ const Login = () => {
                         </div>
 
                         <div className="erp-form-group">
-                            <label htmlFor="password">Secret Key</label>
+                            <label htmlFor="password" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--erp-primary)', marginBottom: '0.75rem', display: 'block' }}>Password</label>
                             <div style={{ position: 'relative' }}>
                                 <i className="fa-solid fa-fingerprint" style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', opacity: 0.3, fontSize: '1.1rem' }}></i>
                                 <input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
                                     name="password"
-                                    className="erp-form-control"
-                                    style={{ paddingLeft: '3.2rem', paddingRight: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a', background: '#f8fafc', border: '1.5px solid #e2e8f0' }}
+                                    className="erp-form-control pink-glow-input"
+                                    style={{ paddingLeft: '3.2rem', paddingRight: '3.2rem', height: '56px', borderRadius: '16px', color: '#0f172a' }}
                                     placeholder="•••••"
                                     value={credentials.password}
                                     onChange={handleChange}
@@ -230,11 +230,12 @@ const Login = () => {
                                 fontSize: '1.1rem',
                                 fontWeight: 700,
                                 background: 'var(--erp-primary)',
-                                color: 'white'
+                                color: 'white',
+                                justifyContent: 'center'
                             }} 
                             disabled={loading}
                         >
-                            {loading ? <i className="fa-solid fa-spinner fa-spin"></i> : 'Authenticate Account'}
+                            {loading ? <i className="fa-solid fa-spinner fa-spin"></i> : 'Login'}
                         </button>
                     </form>
 
