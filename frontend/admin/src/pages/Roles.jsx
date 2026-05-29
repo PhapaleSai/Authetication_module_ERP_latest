@@ -296,7 +296,7 @@ const Roles = () => {
 
                         {/* Permissions List */}
                         <div style={{ overflow: 'auto', flex: 1, padding: '1rem 2rem' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                            <div className="erp-permissions-grid">
                                 {filteredPerms.map(perm => {
                                     const isActive = selectedPerms.includes(perm.permission_name);
                                     return (
