@@ -381,36 +381,7 @@ const Dashboard = () => {
                             </div>
                         </div>
 
-                        {/* System Health Card */}
-                        <div className="erp-card" style={{ borderRadius: '28px', background: 'var(--erp-dark)', color: 'white', padding: '2rem', border: 'none', position: 'relative', overflow: 'hidden' }}>
-                            <div style={{ position: 'absolute', top: '-20%', right: '-20%', width: '150px', height: '150px', background: 'var(--erp-primary)', filter: 'blur(60px)', opacity: 0.5 }}></div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', position: 'relative', zIndex: 1 }}>
-                                <div>
-                                    <div style={{ fontWeight: 800, fontSize: '1.2rem', marginBottom: '0.25rem' }}>Node Status</div>
-                                    <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Infrastructure Monitor</div>
-                                </div>
-                                <div style={{ padding: '0.5rem', background: 'rgba(255, 255, 255, 0.1)', color: 'var(--erp-accent)', borderRadius: '10px', fontSize: '0.9rem' }}>
-                                    <i className="fa-solid fa-bolt-lightning"></i>
-                                </div>
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', position: 'relative', zIndex: 1 }}>
-                                {[
-                                    { name: 'Auth Server', status: 'Healthy', val: 99 },
-                                    { name: 'RBAC Engine', status: 'Healthy', val: 100 },
-                                    { name: 'Database', status: 'Healthy', val: 98 }
-                                ].map((s, i) => (
-                                    <div key={i}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.4rem', fontWeight: 600 }}>
-                                            <span style={{ color: '#94a3b8' }}>{s.name}</span>
-                                            <span style={{ color: '#4ade80' }}>{s.status}</span>
-                                        </div>
-                                        <div style={{ background: 'rgba(255,255,255,0.05)', height: '4px', borderRadius: '2px' }}>
-                                            <div style={{ background: 'linear-gradient(to right, var(--erp-primary), var(--erp-primary-light))', width: `${s.val}%`, height: '100%', borderRadius: '2px' }}></div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
