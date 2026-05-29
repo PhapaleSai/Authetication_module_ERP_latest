@@ -78,10 +78,12 @@ const UserProfile = () => {
                     <i className={`fa-solid ${user.status ? 'fa-circle-check' : 'fa-circle-xmark'}`} style={{ marginRight: '0.6rem' }}></i>
                     {user.status ? 'Identity Active' : 'Access Restricted'}
                 </div>
-                <div style={{ background: 'var(--erp-surface)', border: '1px solid var(--erp-border)', borderRadius: '12px', padding: '0.6rem 1.25rem', fontSize: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <i className="fa-solid fa-clock-rotate-left" style={{ opacity: 0.5 }}></i>
-                    LAST SEEN: {audit.length > 0 ? new Date(audit[0].timestamp).toLocaleString() : 'NEVER'}
-                </div>
+                {audit.length > 0 && (
+                    <div style={{ background: 'var(--erp-surface)', border: '1px solid var(--erp-border)', borderRadius: '12px', padding: '0.6rem 1.25rem', fontSize: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <i className="fa-solid fa-clock-rotate-left" style={{ opacity: 0.5 }}></i>
+                        LAST SEEN: {new Date(audit[0].timestamp).toLocaleString()}
+                    </div>
+                )}
             </div>
 
             <div className="erp-form-grid-3" style={{ gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>
