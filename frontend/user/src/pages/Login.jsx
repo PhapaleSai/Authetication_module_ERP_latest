@@ -46,7 +46,7 @@ function Login() {
                     } else {
                         const role = user.role?.toLowerCase() || '';
                         const staffRoles = ['admin', 'principal', 'vice principal', 'hod', 'accountant', 'it admins', 'principals & vice principals', 'teaching staff', 'non-teaching staff', 'accountants', 'teacher'];
-                        
+
                         if (false) {
                             // Dummy block to maintain structure if needed, or just remove
                         } else {
@@ -94,7 +94,7 @@ function Login() {
             } else {
                 const role = res.data.role?.toLowerCase() || '';
                 const staffRoles = ['principal', 'vice principal', 'hod', 'accountant', 'it admins', 'principals & vice principals', 'teaching staff', 'non-teaching staff', 'accountants', 'teacher'];
-                
+
                 const getModuleURL = (type) => {
                     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                     if (isLocal) {
@@ -126,28 +126,28 @@ function Login() {
     return (
         <div className="erp-auth-page">
             <div className="erp-auth-page__brand">
-                <div style={{ 
-                    width: '180px', 
-                    height: '180px', 
-                    background: 'white', 
-                    borderRadius: '50%', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
+                <div style={{
+                    width: '180px',
+                    height: '180px',
+                    background: 'white',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     padding: '1.5rem',
                     marginBottom: '2rem',
                     boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
                     border: '4px solid rgba(255,255,255,0.1)',
                     zIndex: 2
                 }}>
-                    <img 
-                        src="/assets/pvg_logo.png" 
-                        alt="PVG Logo" 
-                        style={{ 
-                            width: '100%', 
-                            height: '100%', 
+                    <img
+                        src="/assets/pvg_logo.png"
+                        alt="PVG Logo"
+                        style={{
+                            width: '100%',
+                            height: '100%',
                             objectFit: 'contain'
-                        }} 
+                        }}
                     />
                 </div>
                 <div style={{ zIndex: 2, textAlign: 'center' }}>
@@ -156,7 +156,7 @@ function Login() {
                         Unified Student & Applicant Gateway for PVG College of Science
                     </p>
                 </div>
-                
+
                 <div style={{ position: 'absolute', bottom: '3rem', opacity: 0.3, fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.1em' }}>
                     &copy; {new Date().getFullYear()} PUNE VIDYARTHI GRIHA
                 </div>
